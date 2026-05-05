@@ -1,28 +1,24 @@
 import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/mongodb";
-import Student from "@/models/Student";
-import { verifyRequestToken } from "@/lib/auth";
-import { handleApiError, AuthenticationError, NotFoundError } from "@/lib/errors";
+import { requireAuthRole, getStudentForUser } from "@/lib/apiAuth";
+import { handleApiError } from "@/lib/errors";
+
+interface AttendanceEntry {
+  status: string;
+}
 
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
 
-    // Verify authentication
-    const token = await verifyRequestToken(request);
-    if (!token) {
-      throw new AuthenticationError();
-    }
+    const token = await requireAuthRole(request, "student");
 
     // Get current student record using userId from token
-    const currentStudent = await Student.findById(token.userId);
-    if (!currentStudent) {
-      throw new NotFoundError("Student not found");
-    }
+    const currentStudent = await getStudentForUser(token.userId);
 
     // Count absences for current subject
     const absences = currentStudent.attendanceHistory
-      ? currentStudent.attendanceHistory.filter((h: any) => h.status === "absent").length
+      ? currentStudent.attendanceHistory.filter((h: AttendanceEntry) => h.status === "absent").length
       : 0;
 
     return NextResponse.json({

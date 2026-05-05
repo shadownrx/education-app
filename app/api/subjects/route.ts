@@ -28,14 +28,14 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
     const body = await request.json();
-    const { name, code, institution } = validateInput(subjectSchema, body) as any;
+    const { name, code, institution } = validateInput(subjectSchema, body);
 
     const uniqueCode = code || Math.random().toString(36).substring(2, 8).toUpperCase();
 
     const subject = await Subject.create({
       name,
       code: uniqueCode,
-      institution: institution || "Institución",
+      institution: institution || "Institucion",
       teacherId: new mongoose.Types.ObjectId(token.userId),
     });
 

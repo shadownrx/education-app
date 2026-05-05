@@ -50,12 +50,15 @@ export default async function middleware(request: NextRequest) {
   if (pathname.startsWith("/student")) {
     const studentAccess = request.cookies.get("student_access")?.value;
     const activeSubjectId = request.cookies.get("active_subject_id")?.value;
+    const payload = token ? await verifyToken(token) : null;
 
-    if (!studentAccess || !activeSubjectId) {
+    if (!studentAccess || !activeSubjectId || !payload || payload.role !== "student") {
       // Redirect to home if student session is missing
       const response = NextResponse.redirect(new URL("/", request.url));
+      response.cookies.delete("token");
       response.cookies.delete("student_access");
       response.cookies.delete("active_subject_id");
+      response.cookies.delete("student_id");
       response.cookies.delete("student_name");
       return response;
     }

@@ -224,13 +224,13 @@ export default function GradesPage() {
                 <div className="p-6 rounded-[24px] bg-slate-950/50 border border-white/5">
                    <h4 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">Puntos Fuertes</h4>
                    <p className="text-xs text-slate-400 leading-relaxed italic">
-                      "Gran participación en los TPs de lógica. La mayoría del curso ha superado el promedio esperado en la primera etapa."
+                      &quot;Gran participacion en los TPs de logica. La mayoria del curso ha superado el promedio esperado en la primera etapa.&quot;
                    </p>
                 </div>
                 <div className="p-6 rounded-[24px] bg-slate-950/50 border border-white/5">
                    <h4 className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-2">Áreas a Reforzar</h4>
                    <p className="text-xs text-slate-400 leading-relaxed italic">
-                      "Se observa una caída en las notas del TP de SQL. Se recomienda una clase de repaso antes del examen final."
+                      &quot;Se observa una caida en las notas del TP de SQL. Se recomienda una clase de repaso antes del examen final.&quot;
                    </p>
                 </div>
              </div>

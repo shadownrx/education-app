@@ -34,7 +34,8 @@ export const registerSchema = z.object({
 
 export const subjectSchema = z.object({
   name: z.string().min(1, "Subject name is required").max(100),
-  code: z.string().min(1, "Subject code is required").max(20),
+  code: z.string().min(1, "Subject code is required").max(20).optional(),
+  institution: z.string().min(1, "Institution is required").max(150).optional(),
 });
 
 export const studentSchema = z.object({
@@ -49,6 +50,44 @@ export const assignmentSchema = z.object({
   dueDate: z.string().datetime().optional(),
   subjectId: mongoIdSchema,
 });
+
+export const messageSchema = z.object({
+  recipientId: mongoIdSchema,
+  subjectId: mongoIdSchema,
+  content: z.string().trim().min(1, "Message content cannot be empty").max(5000),
+  conversationId: z.string().trim().min(1).max(200),
+});
+
+export const aiPromptSchema = z.object({
+  prompt: z.string().trim().min(1, "Prompt is required").max(4000),
+});
+
+export const aiActionSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("CREATE_ASSIGNMENT"),
+    data: z.object({
+      title: z.string().trim().min(1).max(200),
+      description: z.string().trim().min(1).max(5000),
+      deadline: z.string().trim().min(1).max(50),
+    }),
+  }),
+  z.object({
+    type: z.literal("CREATE_LESSON_PLAN"),
+    data: z.object({
+      title: z.string().trim().min(1).max(200),
+      week: z.coerce.number().int().min(1).max(60),
+      topics: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
+      date: z.string().trim().min(1).max(50),
+    }),
+  }),
+  z.object({
+    type: z.literal("FEEDBACK"),
+    data: z.object({
+      studentName: z.string().trim().min(1).max(100),
+      text: z.string().trim().min(1).max(2000),
+    }),
+  }),
+]);
 
 // Validate and sanitize user input
 // Using generics to automatically infer the type from the Zod schema
@@ -65,7 +104,7 @@ export function validateInput<T extends z.ZodTypeAny>(schema: T, data: unknown):
 }
 
 // Sanitize object to prevent NoSQL injection
-export function sanitizeObject(obj: any): any {
+export function sanitizeObject(obj: unknown): unknown {
   if (typeof obj !== "object" || obj === null) {
     return obj;
   }
@@ -74,7 +113,7 @@ export function sanitizeObject(obj: any): any {
     return obj.map(sanitizeObject);
   }
 
-  const sanitized: any = {};
+  const sanitized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
     // Prevent $ and . in keys (NoSQL injection prevention)
     if (key.startsWith("$") || key.includes(".")) {

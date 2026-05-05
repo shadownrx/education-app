@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 // Simple in-memory rate limiting (for production use Redis)
 const requests = new Map<string, { count: number; resetTime: number }>();
+let lastCleanup = 0;
 
 export function rateLimit(
   identifier: string,
@@ -9,6 +10,15 @@ export function rateLimit(
   windowMs: number = 60 * 1000 // 1 minute
 ): boolean {
   const now = Date.now();
+  if (now - lastCleanup > windowMs) {
+    for (const [key, value] of requests.entries()) {
+      if (now > value.resetTime) {
+        requests.delete(key);
+      }
+    }
+    lastCleanup = now;
+  }
+
   const existing = requests.get(identifier);
 
   if (!existing || now > existing.resetTime) {

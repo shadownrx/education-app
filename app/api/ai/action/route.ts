@@ -1,66 +1,57 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextResponse, type NextRequest } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Assignment from "@/models/Assignment";
 import LessonPlan from "@/models/LessonPlan";
-import Subject from "@/models/Subject";
+import { requireAuthRole, requireTeacherSubject } from "@/lib/apiAuth";
+import { handleApiError, ValidationError } from "@/lib/errors";
+import { aiActionSchema, validateInput } from "@/lib/validation";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { type, data } = await request.json();
-    console.log("AI_ACTION_REQUEST:", { type, data });
-
-    const cookieStore = await cookies();
-    const activeSubjectId = cookieStore.get("active_subject_id")?.value;
+    const token = await requireAuthRole(request, "teacher");
+    const action = validateInput(aiActionSchema, await request.json());
+    const activeSubjectId = request.cookies.get("active_subject_id")?.value;
 
     if (!activeSubjectId) {
-      return NextResponse.json({ error: "No subject selected" }, { status: 400 });
+      throw new ValidationError("No active subject selected");
     }
 
     await dbConnect();
-    const subject = await Subject.findById(activeSubjectId);
-
-    if (!subject) {
-      return NextResponse.json({ error: "Subject not found" }, { status: 404 });
-    }
+    const subject = await requireTeacherSubject(token.userId, activeSubjectId);
 
     let result;
 
-    switch (type) {
+    switch (action.type) {
       case "CREATE_ASSIGNMENT":
-        // Ensure data has all required fields
-        const assignmentData = {
-          title: data.title,
-          description: data.description,
-          deadline: data.deadline,
-          subjectId: activeSubjectId,
+        result = await Assignment.create({
+          title: action.data.title,
+          description: action.data.description,
+          deadline: action.data.deadline,
+          subjectId: subject._id,
           subject: subject.name,
           student: "Todos",
-          status: "pending"
-        };
-        console.log("CREATING_ASSIGNMENT_WITH:", assignmentData);
-        result = await Assignment.create(assignmentData);
+          status: "pending",
+        });
         break;
 
       case "CREATE_LESSON_PLAN":
         result = await LessonPlan.create({
-          ...data,
-          subjectId: activeSubjectId,
-          status: "upcoming"
+          title: action.data.title,
+          week: action.data.week,
+          topics: action.data.topics || [],
+          date: action.data.date,
+          subjectId: subject._id,
+          status: "upcoming",
         });
         break;
 
       case "FEEDBACK":
         result = { success: true, message: "Feedback acknowledged" };
         break;
-
-      default:
-        return NextResponse.json({ error: "Unknown action type" }, { status: 400 });
     }
 
     return NextResponse.json({ success: true, result });
-  } catch (error: any) {
-    console.error("AI_ACTION_ERROR:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }

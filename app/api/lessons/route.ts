@@ -1,9 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import LessonPlan from "@/models/LessonPlan";
+import Subject from "@/models/Subject";
 import { verifyRequestToken, requireRole } from "@/lib/auth";
 import { mongoIdSchema, validateInput } from "@/lib/validation";
-import { handleApiError, AuthenticationError, AuthorizationError, ValidationError } from "@/lib/errors";
+import { handleApiError, AuthenticationError, AuthorizationError, ValidationError, NotFoundError } from "@/lib/errors";
+import mongoose from "mongoose";
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,6 +29,16 @@ export async function GET(request: NextRequest) {
     }
 
     validateInput(mongoIdSchema, subjectId);
+
+    // Verify subject ownership
+    const subject = await Subject.findOne({
+      _id: new mongoose.Types.ObjectId(subjectId),
+      teacherId: new mongoose.Types.ObjectId(token.userId),
+    });
+
+    if (!subject) {
+      throw new AuthorizationError("You don't have access to this subject");
+    }
 
     const lessons = await LessonPlan.find({ subjectId }).sort({ week: 1 });
     return NextResponse.json(lessons);
@@ -64,6 +76,16 @@ export async function POST(request: NextRequest) {
     }
 
     validateInput(mongoIdSchema, subjectId);
+
+    // Verify subject ownership
+    const subject = await Subject.findOne({
+      _id: new mongoose.Types.ObjectId(subjectId),
+      teacherId: new mongoose.Types.ObjectId(token.userId),
+    });
+
+    if (!subject) {
+      throw new AuthorizationError("You don't have access to this subject");
+    }
 
     const lesson = await LessonPlan.create({
       title,

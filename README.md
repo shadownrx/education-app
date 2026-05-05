@@ -19,11 +19,11 @@ Integración nativa con **Groq (Llama 3)** para generar contenidos pedagógicos 
 Una interfaz pensada para el uso intensivo. El modo oscuro profundo reduce el cansancio visual, mientras que la disposición tipo "Bento" organiza la información por prioridad.
 
 ### 3. Arquitectura Robusta y Segura
-Construido con **Next.js 15** y **MongoDB Atlas**, garantizando una disponibilidad del 99.9% y la máxima seguridad en el manejo de datos sensibles de menores.
+Construido con **Next.js 16.2.4** y **MongoDB Atlas**, con foco en disponibilidad y seguridad para el manejo de datos sensibles de menores.
 
 ## 🛠️ Stack Detallado
 
-- **Frontend**: Next.js 15 (React 19), Tailwind CSS, Framer Motion.
+- **Frontend**: Next.js 16.2.4 (React 19), Tailwind CSS, Framer Motion.
 - **Database**: MongoDB via Mongoose.
 - **AI**: Llama-3-70b-versatile vía Groq SDK.
 - **Auth**: JWT & Cookies seguras.

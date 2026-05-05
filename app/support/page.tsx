@@ -130,7 +130,7 @@ export default function SupportPage() {
           {/* Footer Promo */}
           <footer className="mt-20 py-10 border-t border-white/5 text-center">
              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-4">EduFlow Support Ecosystem</p>
-             <p className="text-xs text-slate-500 font-medium italic">"Mejorando cada día para que enseñes mejor."</p>
+             <p className="text-xs text-slate-500 font-medium italic">&quot;Mejorando cada dia para que ensenes mejor.&quot;</p>
           </footer>
         </div>
       </main>

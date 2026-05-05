@@ -25,17 +25,55 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/Toast";
 
+interface SubjectSummary {
+  _id: string;
+  name: string;
+  institution: string;
+  code: string;
+}
+
+interface StudentSummary {
+  status: "present" | "absent" | "late" | "pending";
+}
+
+interface AssignmentSummary {
+  status: "pending" | "submitted" | "graded" | "late";
+}
+
+interface LessonSummary {
+  title: string;
+  week: number;
+  status: "completed" | "current" | "upcoming";
+  date?: string;
+}
+
+interface StatCard {
+  name: string;
+  value: string;
+  icon: typeof Users;
+  color: string;
+  bg: string;
+  label: string;
+}
+
+interface ScheduleItem {
+  time: string;
+  title: string;
+  status: "finished" | "ongoing" | "upcoming";
+}
+
 export default function TeacherDashboard() {
   const { toast } = useToast();
-  const [stats, setStats] = useState<any[]>([]);
-  const [schedule, setSchedule] = useState<any[]>([]);
+  const [stats, setStats] = useState<StatCard[]>([]);
+  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("");
-  const [activeSubject, setActiveSubject] = useState<any>(null);
+  const [activeSubject, setActiveSubject] = useState<SubjectSummary | null>(null);
   
   // Referral State
   const [copied, setCopied] = useState(false);
-  const referralLink = "https://eduflow.app/invite/prof-" + (userName ? userName.toLowerCase().replace(/\s/g, '-') : "docente");
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const referralLink = `${appUrl}/invite/prof-${userName ? userName.toLowerCase().replace(/\s/g, "-") : "docente"}`;
 
   useEffect(() => {
     fetchDashboardData();
@@ -69,23 +107,25 @@ export default function TeacherDashboard() {
       const assignments = await assignmentsRes.json();
       const lessons = await lessonsRes.json();
 
-      const studentsArray = Array.isArray(students) ? students : [];
-      const assignmentsArray = Array.isArray(assignments) ? assignments : [];
-      const lessonsArray = Array.isArray(lessons) ? lessons : [];
+      const studentsArray = Array.isArray(students) ? (students as StudentSummary[]) : [];
+      const assignmentsArray = Array.isArray(assignments) ? (assignments as AssignmentSummary[]) : [];
+      const lessonsArray = Array.isArray(lessons) ? (lessons as LessonSummary[]) : [];
 
-      const attendanceToday = studentsArray.filter((s: any) => s.status === "present").length;
+      const attendanceToday = studentsArray.filter((s) => s.status === "present").length;
       const attendancePercent = studentsArray.length > 0 ? Math.round((attendanceToday / studentsArray.length) * 100) : 0;
-      const pendingTPs = assignmentsArray.filter((a: any) => a.status === "submitted" || a.status === "pending").length;
+      const pendingTPs = assignmentsArray.filter((a) => a.status === "submitted" || a.status === "pending").length;
+      const completedLessons = lessonsArray.filter((lesson) => lesson.status === "completed").length;
+      const planPercent = lessonsArray.length > 0 ? Math.round((completedLessons / lessonsArray.length) * 100) : 0;
 
       setStats([
         { name: "Alumnos", value: studentsArray.length.toString(), icon: Users, color: "text-blue-400", bg: "bg-blue-400/10", label: "Registrados" },
         { name: "Asistencia", value: `${attendancePercent}%`, icon: CheckCircle2, color: "text-emerald-400", bg: "bg-emerald-400/10", label: "Promedio hoy" },
         { name: "Tareas", value: pendingTPs.toString(), icon: ClipboardList, color: "text-amber-400", bg: "bg-amber-400/10", label: "Por corregir" },
-        { name: "Plan Anual", value: "65%", icon: TrendingUp, color: "text-purple-400", bg: "bg-purple-400/10", label: "Completado" },
+        { name: "Plan Anual", value: `${planPercent}%`, icon: TrendingUp, color: "text-purple-400", bg: "bg-purple-400/10", label: "Completado" },
       ]);
 
-      setSchedule(lessonsArray.slice(0, 4).map((l: any) => ({
-        time: "08:00 AM",
+      setSchedule(lessonsArray.slice(0, 4).map((l) => ({
+        time: l.date ? new Date(l.date).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" }) : `Semana ${l.week}`,
         title: l.title,
         status: l.status === 'completed' ? 'finished' : l.status === 'current' ? 'ongoing' : 'upcoming'
       })));
@@ -100,7 +140,7 @@ export default function TeacherDashboard() {
   const copyReferral = () => {
     navigator.clipboard.writeText(referralLink);
     setCopied(true);
-    toast("¡Link copiado! Comparte EduFlow con otros colegas.", "success");
+    toast("Link copiado. Comparte EduFlow con otros colegas.", "success");
     setTimeout(() => setCopied(false), 3000);
   };
 
@@ -257,7 +297,7 @@ export default function TeacherDashboard() {
                     <div className="relative z-10">
                       <h4 className="text-[10px] md:text-sm font-black text-indigo-400 mb-2 uppercase tracking-widest">Tip de EduAI</h4>
                       <p className="text-[10px] md:text-xs text-slate-300 leading-relaxed italic">
-                        "Puedes pedirme que cree un TP completo solo dándome el tema."
+                        &quot;Puedes pedirme que cree un TP completo solo dandome el tema.&quot;
                       </p>
                     </div>
                     <Bot className="absolute -bottom-4 -right-4 w-16 md:w-24 h-16 md:h-24 text-indigo-500/20 rotate-12" />

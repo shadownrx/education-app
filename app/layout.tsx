@@ -13,7 +13,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "EduFlow | Gestión Educativa Inteligente",
+  title: "EduFlow | Gestion Educativa Inteligente",
   description: "La plataforma integral para profesores y alumnos. Planifica clases, controla la asistencia y gestiona entregas.",
 };
 
@@ -29,7 +29,7 @@ export default function RootLayout({
       lang="es"
       className={`${inter.variable} ${outfit.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-slate-950 text-slate-50">
+      <body className="min-h-full flex flex-col font-sans bg-[#f4f7fb] text-slate-900">
         <ToastProvider>
           {children}
         </ToastProvider>

@@ -1,23 +1,19 @@
 import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Assignment from "@/models/Assignment";
-import { verifyRequestToken, requireRole } from "@/lib/auth";
-import { mongoIdSchema, validateInput } from "@/lib/validation";
-import { handleApiError, AuthenticationError, AuthorizationError, ValidationError } from "@/lib/errors";
-import mongoose from "mongoose";
+import { handleApiError, ValidationError, NotFoundError } from "@/lib/errors";
+import { requireAuthRole, requireTeacherSubject, toObjectId } from "@/lib/apiAuth";
 
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
-    const token = await verifyRequestToken(request);
-    if (!token || !requireRole(token, "teacher")) {
-      throw new AuthenticationError();
-    }
+    const token = await requireAuthRole(request, "teacher");
 
     const subjectIdStr = request.nextUrl.searchParams.get("subjectId");
     if (!subjectIdStr) throw new ValidationError("subjectId is required");
 
-    const subjectId = new mongoose.Types.ObjectId(subjectIdStr);
+    const subject = await requireTeacherSubject(token.userId, subjectIdStr);
+    const subjectId = subject._id;
     const assignments = await Assignment.find({ subjectId }).sort({ createdAt: -1 }).lean();
     
     return NextResponse.json(assignments);
@@ -28,18 +24,23 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const token = await verifyRequestToken(request);
-    if (!token || !requireRole(token, "teacher")) {
-      throw new AuthenticationError();
-    }
+    const token = await requireAuthRole(request, "teacher");
 
     await dbConnect();
     const body = await request.json();
     const { id, grade, status, broadcast, ...data } = body;
 
     if (id) {
+      const assignmentId = toObjectId(id);
+      const existingAssignment = await Assignment.findById(assignmentId);
+      if (!existingAssignment) {
+        throw new NotFoundError("Assignment not found");
+      }
+
+      await requireTeacherSubject(token.userId, existingAssignment.subjectId.toString());
+
       const assignment = await Assignment.findByIdAndUpdate(
-        id,
+        assignmentId,
         { grade, status, submittedAt: body.submittedAt || new Date() },
         { new: true }
       );
@@ -48,7 +49,8 @@ export async function POST(request: NextRequest) {
     
     if (broadcast) {
       const Student = (await import("@/models/Student")).default;
-      const subjectId = new mongoose.Types.ObjectId(data.subjectId);
+      const subject = await requireTeacherSubject(token.userId, data.subjectId);
+      const subjectId = subject._id;
       const students = await Student.find({ subjectId });
 
       const assignments = students.map((s) => ({
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
         description: data.description || "",
         status: "pending",
         subjectId,
-        subject: data.subject,
+        subject: subject.name,
         deadline: data.deadline,
       }));
 
@@ -65,9 +67,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(result, { status: 201 });
     }
 
+    const subject = await requireTeacherSubject(token.userId, data.subjectId);
     const result = await Assignment.create({
       ...data,
-      subjectId: new mongoose.Types.ObjectId(data.subjectId),
+      subjectId: subject._id,
+      subject: subject.name,
       status: "pending"
     });
     return NextResponse.json(result, { status: 201 });
@@ -78,16 +82,19 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const token = await verifyRequestToken(request);
-    if (!token || !requireRole(token, "teacher")) {
-      throw new AuthenticationError();
-    }
+    const token = await requireAuthRole(request, "teacher");
 
     const id = request.nextUrl.searchParams.get("id");
     if (!id) throw new ValidationError("Assignment ID is required");
 
     await dbConnect();
-    await Assignment.findByIdAndDelete(id);
+    const assignment = await Assignment.findById(toObjectId(id));
+    if (!assignment) {
+      throw new NotFoundError("Assignment not found");
+    }
+
+    await requireTeacherSubject(token.userId, assignment.subjectId.toString());
+    await Assignment.findByIdAndDelete(assignment._id);
 
     return NextResponse.json({ success: true });
   } catch (error) {
