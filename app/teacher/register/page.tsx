@@ -20,18 +20,18 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 const passwordRules = [
-  { id: "length", label: "Mínimo 8 caracteres",   test: (p: string) => p.length >= 8 },
-  { id: "upper",  label: "Al menos una mayúscula", test: (p: string) => /[A-Z]/.test(p) },
-  { id: "lower",  label: "Al menos una minúscula", test: (p: string) => /[a-z]/.test(p) },
-  { id: "number", label: "Al menos un número",     test: (p: string) => /[0-9]/.test(p) },
+  { id: "length", label: "Mínimo 8 caracteres", test: (p: string) => p.length >= 8 },
+  { id: "upper", label: "Al menos una mayúscula", test: (p: string) => /[A-Z]/.test(p) },
+  { id: "lower", label: "Al menos una minúscula", test: (p: string) => /[a-z]/.test(p) },
+  { id: "number", label: "Al menos un número", test: (p: string) => /[0-9]/.test(p) },
 ];
 
 const strengthMeta = [
-  { label: "Muy débil",  color: "from-red-500 to-red-400",       text: "text-red-400" },
-  { label: "Débil",      color: "from-orange-500 to-orange-400", text: "text-orange-400" },
-  { label: "Regular",    color: "from-yellow-500 to-yellow-400", text: "text-yellow-400" },
-  { label: "Fuerte",     color: "from-emerald-500 to-emerald-400", text: "text-emerald-400" },
-  { label: "Muy fuerte", color: "from-emerald-400 to-cyan-400",  text: "text-cyan-400" },
+  { label: "Muy débil", color: "from-red-500 to-red-400", text: "text-red-400" },
+  { label: "Débil", color: "from-orange-500 to-orange-400", text: "text-orange-400" },
+  { label: "Regular", color: "from-yellow-500 to-yellow-400", text: "text-yellow-400" },
+  { label: "Fuerte", color: "from-emerald-500 to-emerald-400", text: "text-emerald-400" },
+  { label: "Muy fuerte", color: "from-emerald-400 to-cyan-400", text: "text-cyan-400" },
 ];
 
 export default function TeacherRegister() {
@@ -129,7 +129,7 @@ export default function TeacherRegister() {
           <div className="space-y-3">
             {[
               { icon: ShieldCheck, text: "Cuenta segura en segundos" },
-              { icon: Sparkles,    text: "Asistente EduAI incluido" },
+              { icon: Sparkles, text: "Asistente EduAI incluido" },
               { icon: GraduationCap, text: "Multi-materia e instituciones" },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-3 text-slate-400 text-sm font-medium">
@@ -144,7 +144,7 @@ export default function TeacherRegister() {
 
         {/* Footer */}
         <p className="text-slate-700 text-xs font-bold uppercase tracking-widest">
-          Buenos Aires · 2026
+          Tucumán · 2026
         </p>
       </div>
 
@@ -318,7 +318,7 @@ export default function TeacherRegister() {
                                 >
                                   {rule.passed
                                     ? <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                                    : <Circle       className="w-4 h-4 text-slate-700 flex-shrink-0" />
+                                    : <Circle className="w-4 h-4 text-slate-700 flex-shrink-0" />
                                   }
                                 </motion.div>
                                 <span className={`text-xs font-semibold transition-colors duration-300 ${rule.passed ? "text-emerald-400" : "text-slate-600"}`}>
