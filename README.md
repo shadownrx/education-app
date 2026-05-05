@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 EduFlow: La Nueva Era de la Gestión Pedagógica
 
-## Getting Started
+EduFlow es una plataforma ecosistémica diseñada para cerrar la brecha entre la gestión administrativa escolar y el proceso de enseñanza-aprendizaje. Mediante el uso de **Inteligencia Artificial Proactiva**, transformamos datos crudos en información pedagógica valiosa.
 
-First, run the development server:
+## 🎯 Objetivos Estratégicos del Proyecto
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Para que EduFlow sea una herramienta de éxito masivo, nos enfocamos en:
+1. **Eficiencia Temporal**: Reducir la carga administrativa del docente en un 30% mediante automatizaciones inteligentes.
+2. **Empoderamiento con IA**: Proveer un asistente (EduAI) que sirva como multiplicador de la creatividad pedagógica.
+3. **Analítica Humana**: Convertir el registro de asistencia y notas en indicadores de bienestar y progreso estudiantil.
+4. **Barrera Cero**: Una interfaz tan intuitiva que cualquier docente, sin importar su nivel técnico, pueda dominarla en minutos.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Pilares Tecnológicos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. IA Generativa (EduAI)
+Integración nativa con **Groq (Llama 3)** para generar contenidos pedagógicos en segundos. EduAI entiende el contexto del aula argentina y propone actividades alineadas con los diseños curriculares.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. Diseño UX Premium "Oceanic"
+Una interfaz pensada para el uso intensivo. El modo oscuro profundo reduce el cansancio visual, mientras que la disposición tipo "Bento" organiza la información por prioridad.
 
-## Learn More
+### 3. Arquitectura Robusta y Segura
+Construido con **Next.js 15** y **MongoDB Atlas**, garantizando una disponibilidad del 99.9% y la máxima seguridad en el manejo de datos sensibles de menores.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Stack Detallado
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Frontend**: Next.js 15 (React 19), Tailwind CSS, Framer Motion.
+- **Database**: MongoDB via Mongoose.
+- **AI**: Llama-3-70b-versatile vía Groq SDK.
+- **Auth**: JWT & Cookies seguras.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📖 Documentación
 
-## Deploy on Vercel
+Hemos preparado recursos específicos para que la implementación sea inmediata:
+- **Para Docentes**: [Manual de Usuario y Objetivos Pedagógicos](./MANUAL_DOCENTE.md) 🍎
+- **Para Instituciones**: Guía de despliegue y visión estratégica.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*EduFlow - Inspirando mentes, optimizando tiempos.*
