@@ -8,20 +8,20 @@ import { handleApiError, ValidationError } from "@/lib/errors";
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting: max 3 registration attempts per hour per IP
+    await dbConnect();
+
+    // Validate input FIRST — invalid attempts (e.g. short passwords) don't count against the rate limit
+    const body = await request.json();
+    const { name, email, password } = validateInput(registerSchema, body);
+
+    // Rate limiting: max 5 registration attempts per hour per IP (only valid requests count)
     const identifier = getIdentifier(request);
-    if (!rateLimit(`register:${identifier}`, 3, 60 * 60 * 1000)) {
+    if (!rateLimit(`register:${identifier}`, 5, 60 * 60 * 1000)) {
       return NextResponse.json(
         { error: "Too many registration attempts. Please try again later." },
         { status: 429, headers: { "Retry-After": "3600" } }
       );
     }
-
-    await dbConnect();
-
-    // Validate input
-    const body = await request.json();
-    const { name, email, password } = validateInput(registerSchema, body);
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
