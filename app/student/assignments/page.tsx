@@ -11,7 +11,10 @@ import {
   X,
   Plus,
   Award,
-  Loader2
+  Loader2,
+  Sparkles,
+  ArrowRight,
+  TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -27,7 +30,7 @@ export default function StudentAssignmentsPage() {
 
   const fetchStudentData = async () => {
     try {
-      // First get the student's info and subjectId
+      setLoading(true);
       const meRes = await fetch("/api/students/me");
       if (!meRes.ok) throw new Error("Failed to fetch student info");
       
@@ -37,7 +40,6 @@ export default function StudentAssignmentsPage() {
         return;
       }
 
-      // Then fetch assignments with the subjectId
       const assignRes = await fetch(`/api/assignments?subjectId=${studentInfo.subjectId}`);
       if (!assignRes.ok) throw new Error("Failed to fetch assignments");
       
@@ -65,7 +67,7 @@ export default function StudentAssignmentsPage() {
           submittedAt: new Date().toISOString() 
         }),
       });
-      fetchAssignments();
+      fetchStudentData(); // Correct function name
     } catch (error) {
       console.error("Error submitting assignment:", error);
     } finally {
@@ -74,29 +76,37 @@ export default function StudentAssignmentsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-950">
+    <div className="flex min-h-screen bg-[#020617] text-slate-200 overflow-x-hidden">
       <Sidebar role="student" />
       
-      <main className="flex-1 ml-64">
+      <main className="flex-1 w-full lg:ml-72 transition-all duration-300">
         <TopBar role="student" />
         
-        <div className="p-8">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h1 className="text-3xl font-bold mb-1">Mis Trabajos Prácticos</h1>
-              <p className="text-slate-400">Gestiona tus entregas y revisa tus notas</p>
-            </div>
-          </div>
+        <div className="p-4 md:p-10 max-w-7xl mx-auto">
+          {/* Header */}
+          <header className="mb-10 p-6 md:p-10 rounded-[32px] md:rounded-[40px] bg-gradient-to-br from-indigo-600/10 to-transparent border border-indigo-500/10 relative overflow-hidden">
+             <div className="relative z-10">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-6">
+                  <ClipboardList className="w-3.5 h-3.5" /> Entregas Academicas
+                </div>
+                <h1 className="text-2xl md:text-4xl font-black text-white mb-2 tracking-tighter">Mis Trabajos Prácticos</h1>
+                <p className="text-slate-400 text-xs md:text-sm font-medium">Gestiona tus entregas y revisa el feedback de tus profesores.</p>
+             </div>
+             <div className="absolute top-0 right-0 p-10 opacity-5">
+                <FileText className="w-48 h-48 text-indigo-500" />
+             </div>
+          </header>
 
           <div className="grid grid-cols-1 gap-6">
             {loading ? (
-              <div className="px-6 py-20 text-center glass-card rounded-3xl">
-                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mx-auto mb-4" />
-                <p className="text-slate-400">Cargando tus trabajos...</p>
+              <div className="py-32 text-center bg-[#0f172a] rounded-[32px] border border-white/5">
+                <Loader2 className="w-10 h-10 text-indigo-500 animate-spin mx-auto mb-4" />
+                <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Sincronizando trabajos...</p>
               </div>
             ) : assignments.length === 0 ? (
-              <div className="px-6 py-20 text-center glass-card rounded-3xl">
-                <p className="text-slate-400">No tienes trabajos asignados.</p>
+              <div className="py-32 text-center bg-[#0f172a] rounded-[32px] border border-white/5">
+                <CheckCircle2 className="w-12 h-12 text-emerald-500/20 mx-auto mb-4" />
+                <p className="text-slate-500 italic">No tienes trabajos asignados en esta materia.</p>
               </div>
             ) : (
               <AnimatePresence mode="popLayout">
@@ -108,27 +118,27 @@ export default function StudentAssignmentsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
                     className={cn(
-                      "glass-card rounded-3xl p-6 border-l-4",
-                      as.status === 'pending' ? 'border-l-amber-500' : 
-                      as.status === 'submitted' ? 'border-l-indigo-500' : 'border-l-emerald-500'
+                      "p-6 md:p-8 rounded-[32px] bg-[#0f172a] border border-white/5 hover:border-white/10 transition-all group relative overflow-hidden",
+                      as.status === 'pending' ? 'border-l-4 border-l-amber-500/50' : 
+                      as.status === 'submitted' ? 'border-l-4 border-l-indigo-500/50' : 'border-l-4 border-l-emerald-500/50'
                     )}
                   >
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                       <div className="flex items-center gap-5">
                         <div className={cn(
-                          "w-14 h-14 rounded-2xl flex items-center justify-center",
+                          "w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110",
                           as.status === 'pending' ? 'bg-amber-500/10 text-amber-400' : 
                           as.status === 'submitted' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-emerald-500/10 text-emerald-400'
                         )}>
-                          <FileText className="w-7 h-7" />
+                          <FileText className="w-7 h-7 md:w-8 md:h-8" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold mb-1">{as.title}</h3>
+                          <h3 className="text-lg md:text-xl font-black text-white mb-1 tracking-tight">{as.title}</h3>
                           <div className="flex items-center gap-4">
-                            <span className="text-sm text-slate-400 font-medium">{as.subject}</span>
+                            <span className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest">{as.subject}</span>
                             <span className="w-1 h-1 rounded-full bg-slate-700" />
-                            <span className="text-xs text-slate-500 flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> Vence: {as.deadline}
+                            <span className="text-[10px] md:text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                              <Clock className="w-3 h-3" /> Vence: {as.deadline || "Sin fecha"}
                             </span>
                           </div>
                         </div>
@@ -139,28 +149,24 @@ export default function StudentAssignmentsPage() {
                           <button 
                             onClick={() => handleUpload(as._id)}
                             disabled={uploading === as._id}
-                            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-600/20"
+                            className="w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-black text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20 active:scale-95 disabled:opacity-50"
                           >
                             {uploading === as._id ? (
-                              <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Subiendo...
-                              </>
+                              <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
-                              <>
-                                <Upload className="w-4 h-4" /> Entregar Trabajo
-                              </>
+                              <Upload className="w-4 h-4" />
                             )}
+                            {uploading === as._id ? "Subiendo..." : "Entregar"}
                           </button>
                         )}
 
                         {as.status === 'submitted' && (
                           <div className="flex items-center gap-6">
-                            <div className="text-right">
-                              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Enviado</p>
-                              <p className="text-sm font-semibold text-slate-300">{new Date(as.submittedAt).toLocaleDateString()}</p>
+                            <div className="text-right hidden sm:block">
+                              <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Enviado</p>
+                              <p className="text-xs font-bold text-slate-300">{as.submittedAt ? new Date(as.submittedAt).toLocaleDateString() : "-"}</p>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold uppercase">
+                            <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] font-black uppercase tracking-widest">
                               <CheckCircle2 className="w-4 h-4" /> Entregado
                             </div>
                           </div>
@@ -169,16 +175,18 @@ export default function StudentAssignmentsPage() {
                         {as.status === 'graded' && (
                           <div className="flex items-center gap-8">
                             <div className="text-right">
-                              <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Nota Final</p>
-                              <p className="text-2xl font-black text-emerald-400">{as.grade?.toFixed(1)}</p>
+                              <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Calificación</p>
+                              <p className="text-3xl font-black text-emerald-400 tracking-tighter">{as.grade?.toFixed(1)}</p>
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase">
-                              <Award className="w-4 h-4" /> Calificado
+                            <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black uppercase tracking-widest">
+                              <Award className="w-4 h-4" /> Finalizado
                             </div>
                           </div>
                         )}
                       </div>
                     </div>
+                    {/* Background decoration for group hover */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -189,3 +197,6 @@ export default function StudentAssignmentsPage() {
     </div>
   );
 }
+
+// Dummy import to satisfy type check if ClipboardList is missing in lucide-react in this environment
+import { ClipboardList } from "lucide-react";
