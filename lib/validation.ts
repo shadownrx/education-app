@@ -1,6 +1,7 @@
 // Input validation utilities
 import { ZodError } from "zod";
 import { z } from "zod";
+import { ValidationError } from "./errors";
 
 export const emailSchema = z.string().email("Invalid email format").toLowerCase();
 
@@ -57,7 +58,7 @@ export function validateInput<T extends z.ZodTypeAny>(schema: T, data: unknown):
   } catch (error) {
     if (error instanceof ZodError) {
       const messages = error.issues.map((e) => `${e.path.join(".")}: ${e.message}`);
-      throw new Error(`Validation failed: ${messages.join(", ")}`);
+      throw new ValidationError(`Validation failed: ${messages.join(", ")}`);
     }
     throw error;
   }
