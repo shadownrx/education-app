@@ -1,16 +1,16 @@
 "use client";
 
-import { 
-  GraduationCap, 
-  Users, 
-  BookOpen, 
-  ArrowRight, 
-  Loader2, 
-  X, 
-  Check, 
-  Sparkles, 
-  Zap, 
-  ShieldCheck, 
+import {
+  GraduationCap,
+  Users,
+  BookOpen,
+  ArrowRight,
+  Loader2,
+  X,
+  Check,
+  Sparkles,
+  Zap,
+  ShieldCheck,
   MousePointer2,
   LayoutDashboard,
   Bot,
@@ -114,11 +114,11 @@ export default function Home() {
             </div>
             <span className="font-black text-2xl tracking-tighter text-white">EduFlow</span>
           </div>
-          
+
           <div className="hidden md:flex items-center gap-8 mr-auto ml-12">
-             <a href="#features" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Funciones</a>
-             <a href="#roles" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Accesos</a>
-             <Link href="/support" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Soporte</Link>
+            <a href="#features" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Funciones</a>
+            <a href="#roles" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Accesos</a>
+            <Link href="/support" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Soporte</Link>
           </div>
 
           <div className="flex items-center gap-4">
@@ -145,7 +145,7 @@ export default function Home() {
           >
             <Sparkles className="w-4 h-4" /> La educación del futuro, hoy
           </motion.div>
-          
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -155,14 +155,14 @@ export default function Home() {
             Gestiona tu clase de <br />
             <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">forma inteligente</span>
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
             className="text-slate-400 text-lg md:text-2xl max-w-3xl mx-auto mb-12 font-medium leading-relaxed"
           >
-            La plataforma integral para docentes y alumnos impulsada por IA. 
+            La plataforma integral para docentes y alumnos impulsada por IA.
             Automatiza tareas, conecta con tu aula y potencia el aprendizaje.
           </motion.p>
 
@@ -172,13 +172,13 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-20"
           >
-            <Link 
-              href="/teacher/register" 
+            <Link
+              href="/teacher/register"
               className="w-full sm:w-auto px-10 py-5 rounded-[24px] bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-sm shadow-2xl shadow-indigo-600/40 transition-all active:scale-95 flex items-center justify-center gap-3"
             >
               Empezar Gratis <ArrowRight className="w-5 h-5" />
             </Link>
-            <button 
+            <button
               onClick={() => setShowModal(true)}
               className="w-full sm:w-auto px-10 py-5 rounded-[24px] bg-white/5 border border-white/10 hover:bg-white/10 text-white font-black uppercase tracking-widest text-sm transition-all active:scale-95"
             >
@@ -187,19 +187,19 @@ export default function Home() {
           </motion.div>
 
           {/* Social Proof */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
             className="flex flex-col items-center gap-6 py-12 border-y border-white/5"
           >
-             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Docentes de instituciones prestigiosas ya confían en nosotros</p>
-             <div className="flex flex-wrap justify-center gap-8 md:gap-20 opacity-30 grayscale invert">
-                <div className="text-2xl font-black tracking-tighter">UNIVERSITY</div>
-                <div className="text-2xl font-black tracking-tighter">ACADEMY</div>
-                <div className="text-2xl font-black tracking-tighter">SCHOOL.PRO</div>
-                <div className="text-2xl font-black tracking-tighter">INSTITUTE</div>
-             </div>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">Docentes de instituciones prestigiosas ya confían en nosotros</p>
+            <div className="flex flex-wrap justify-center gap-8 md:gap-20 opacity-30 grayscale invert">
+              <div className="text-2xl font-black tracking-tighter">UNIVERSITY</div>
+              <div className="text-2xl font-black tracking-tighter">ACADEMY</div>
+              <div className="text-2xl font-black tracking-tighter">SCHOOL.PRO</div>
+              <div className="text-2xl font-black tracking-tighter">INSTITUTE</div>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -208,24 +208,24 @@ export default function Home() {
       <section id="features" className="relative py-32 px-6 z-10 bg-slate-950/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-             <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-6">Todo lo que necesitas, <br /> <span className="text-indigo-500">en un solo lugar</span></h2>
-             <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto">Diseñado para ser rápido, intuitivo y 100% responsivo.</p>
+            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-6">Todo lo que necesitas, <br /> <span className="text-indigo-500">en un solo lugar</span></h2>
+            <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto">Diseñado para ser rápido, intuitivo y 100% responsivo.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             {[
-               { title: "Asistente EduAI", desc: "Genera TPs, planes de clase y feedback automatizado con inteligencia artificial de vanguardia.", icon: Bot, color: "text-indigo-400", bg: "bg-indigo-400/10" },
-               { title: "Gestión 360°", desc: "Control total de asistencia, calificaciones y comunicación en un panel administrativo premium.", icon: LayoutDashboard, color: "text-emerald-400", bg: "bg-emerald-400/10" },
-               { title: "Multi-Dispositivo", desc: "Funciona perfectamente en PC, Tablets y Smartphones. Tu aula te acompaña a todos lados.", icon: Laptop, color: "text-blue-400", bg: "bg-blue-400/10" },
-             ].map((f, i) => (
-               <div key={i} className="p-10 rounded-[40px] bg-[#0f172a] border border-white/5 hover:border-indigo-500/30 transition-all group">
-                  <div className={`w-16 h-16 rounded-2xl ${f.bg} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
-                     <f.icon className={`w-8 h-8 ${f.color}`} />
-                  </div>
-                  <h3 className="text-2xl font-black text-white mb-4">{f.title}</h3>
-                  <p className="text-slate-500 leading-relaxed font-medium">{f.desc}</p>
-               </div>
-             ))}
+            {[
+              { title: "Asistente EduAI", desc: "Genera TPs, planes de clase y feedback automatizado con inteligencia artificial de vanguardia.", icon: Bot, color: "text-indigo-400", bg: "bg-indigo-400/10" },
+              { title: "Gestión 360°", desc: "Control total de asistencia, calificaciones y comunicación en un panel administrativo premium.", icon: LayoutDashboard, color: "text-emerald-400", bg: "bg-emerald-400/10" },
+              { title: "Multi-Dispositivo", desc: "Funciona perfectamente en PC, Tablets y Smartphones. Tu aula te acompaña a todos lados.", icon: Laptop, color: "text-blue-400", bg: "bg-blue-400/10" },
+            ].map((f, i) => (
+              <div key={i} className="p-10 rounded-[40px] bg-[#0f172a] border border-white/5 hover:border-indigo-500/30 transition-all group">
+                <div className={`w-16 h-16 rounded-2xl ${f.bg} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
+                  <f.icon className={`w-8 h-8 ${f.color}`} />
+                </div>
+                <h3 className="text-2xl font-black text-white mb-4">{f.title}</h3>
+                <p className="text-slate-500 leading-relaxed font-medium">{f.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -234,58 +234,58 @@ export default function Home() {
       <section id="roles" className="relative py-32 px-6 z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-             <motion.div 
-               whileHover={{ y: -10 }}
-               className="p-12 rounded-[48px] bg-gradient-to-br from-indigo-600 to-indigo-800 border border-white/10 shadow-2xl relative overflow-hidden group"
-             >
-                <div className="relative z-10">
-                   <Users className="w-12 h-12 text-white mb-8" />
-                   <h3 className="text-4xl font-black text-white mb-4">Soy Docente</h3>
-                   <p className="text-indigo-100 text-lg font-medium mb-10 max-w-md">Lidera tu aula con herramientas avanzadas de gestión y automatización.</p>
-                   <Link href="/teacher/login" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-black uppercase tracking-widest text-xs hover:scale-105 transition-transform">
-                      Entrar al Panel <ArrowRight className="w-4 h-4" />
-                   </Link>
-                </div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-             </motion.div>
+            <motion.div
+              whileHover={{ y: -10 }}
+              className="p-12 rounded-[48px] bg-gradient-to-br from-indigo-600 to-indigo-800 border border-white/10 shadow-2xl relative overflow-hidden group"
+            >
+              <div className="relative z-10">
+                <Users className="w-12 h-12 text-white mb-8" />
+                <h3 className="text-4xl font-black text-white mb-4">Soy Docente</h3>
+                <p className="text-indigo-100 text-lg font-medium mb-10 max-w-md">Lidera tu aula con herramientas avanzadas de gestión y automatización.</p>
+                <Link href="/teacher/login" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-black uppercase tracking-widest text-xs hover:scale-105 transition-transform">
+                  Entrar al Panel <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            </motion.div>
 
-             <motion.div 
-               whileHover={{ y: -10 }}
-               className="p-12 rounded-[48px] bg-[#0f172a] border border-white/5 shadow-2xl relative overflow-hidden group"
-             >
-                <div className="relative z-10">
-                   <BookOpen className="w-12 h-12 text-indigo-400 mb-8" />
-                   <h3 className="text-4xl font-black text-white mb-4">Soy Alumno</h3>
-                   <p className="text-slate-400 text-lg font-medium mb-10 max-w-md">Accede a tus clases, entrega tareas y visualiza tu progreso académico.</p>
-                   <button 
-                    onClick={() => setShowModal(true)}
-                    className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-xs hover:scale-105 transition-transform"
-                   >
-                      Ingresar Código <MousePointer2 className="w-4 h-4" />
-                   </button>
-                </div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-             </motion.div>
+            <motion.div
+              whileHover={{ y: -10 }}
+              className="p-12 rounded-[48px] bg-[#0f172a] border border-white/5 shadow-2xl relative overflow-hidden group"
+            >
+              <div className="relative z-10">
+                <BookOpen className="w-12 h-12 text-indigo-400 mb-8" />
+                <h3 className="text-4xl font-black text-white mb-4">Soy Alumno</h3>
+                <p className="text-slate-400 text-lg font-medium mb-10 max-w-md">Accede a tus clases, entrega tareas y visualiza tu progreso académico.</p>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-xs hover:scale-105 transition-transform"
+                >
+                  Ingresar Código <MousePointer2 className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* CTA Footer */}
       <section className="py-20 px-6 z-10 border-t border-white/5 text-center">
-         <h2 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-8">¿Listo para transformar tu aula?</h2>
-         <Link 
-            href="/teacher/register" 
-            className="inline-flex items-center gap-3 px-10 py-5 rounded-[24px] bg-white text-black font-black uppercase tracking-widest text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-xl shadow-white/5 active:scale-95"
-          >
-            Crear cuenta docente
-          </Link>
-          <div className="mt-20 flex flex-col items-center gap-4 opacity-50">
-             <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center"><GraduationCap className="w-3.5 h-3.5" /></div>
-                <span className="font-bold text-sm tracking-tight">EduFlow System</span>
-             </div>
-             <p className="text-[10px] font-bold uppercase tracking-[0.5em]">Buenos Aires • 2026</p>
+        <h2 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-8">¿Listo para transformar tu aula?</h2>
+        <Link
+          href="/teacher/register"
+          className="inline-flex items-center gap-3 px-10 py-5 rounded-[24px] bg-white text-black font-black uppercase tracking-widest text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-xl shadow-white/5 active:scale-95"
+        >
+          Crear cuenta docente
+        </Link>
+        <div className="mt-20 flex flex-col items-center gap-4 opacity-50">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center"><GraduationCap className="w-3.5 h-3.5" /></div>
+            <span className="font-bold text-sm tracking-tight">EduFlow System</span>
           </div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em]">Tucumán • 2026</p>
+        </div>
       </section>
 
       {/* Student Code Modal */}
@@ -329,13 +329,13 @@ export default function Home() {
                   </div>
                   {step === 1 && <div className="absolute -inset-1 bg-indigo-500/20 blur-md rounded-2xl animate-pulse" />}
                 </div>
-                
+
                 <div className="w-12 h-[2px] rounded-full bg-white/5 overflow-hidden">
-                   <motion.div 
+                  <motion.div
                     initial={{ x: "-100%" }}
                     animate={{ x: step > 1 ? "0%" : "-100%" }}
                     className="w-full h-full bg-indigo-500"
-                   />
+                  />
                 </div>
 
                 <div className="relative">
@@ -369,7 +369,7 @@ export default function Home() {
 
                     <form onSubmit={handleValidateCode} className="space-y-6">
                       {error && (
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold text-center flex items-center justify-center gap-2"
@@ -377,7 +377,7 @@ export default function Home() {
                           <AlertCircle className="w-4 h-4" /> {error}
                         </motion.div>
                       )}
-                      
+
                       <div className="relative group">
                         <input
                           id="student-code-input"
@@ -430,7 +430,7 @@ export default function Home() {
                           {error}
                         </div>
                       )}
-                      
+
                       <div className="relative group">
                         <input
                           id="student-name-input"
@@ -454,7 +454,7 @@ export default function Home() {
                           : <><span>Ingresar al Aula</span> <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
                         }
                       </button>
-                      
+
                       <button
                         type="button"
                         onClick={() => { setStep(1); setError(""); }}
@@ -468,11 +468,11 @@ export default function Home() {
               </AnimatePresence>
 
               <div className="mt-12 flex items-center justify-center gap-4 opacity-20 group">
-                 <div className="h-px w-8 bg-slate-500" />
-                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">
-                   EDUFLOW PRO GATEWAY
-                 </p>
-                 <div className="h-px w-8 bg-slate-500" />
+                <div className="h-px w-8 bg-slate-500" />
+                <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em]">
+                  EDUFLOW PRO GATEWAY
+                </p>
+                <div className="h-px w-8 bg-slate-500" />
               </div>
             </motion.div>
           </div>
