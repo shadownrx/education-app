@@ -50,9 +50,10 @@ export const assignmentSchema = z.object({
 });
 
 // Validate and sanitize user input
-export function validateInput<T>(schema: z.ZodSchema, data: unknown): T {
+// Using generics to automatically infer the type from the Zod schema
+export function validateInput<T extends z.ZodTypeAny>(schema: T, data: unknown): z.infer<T> {
   try {
-    return schema.parse(data) as T;
+    return schema.parse(data);
   } catch (error) {
     if (error instanceof ZodError) {
       const messages = error.errors.map((e) => `${e.path.join(".")}: ${e.message}`);
