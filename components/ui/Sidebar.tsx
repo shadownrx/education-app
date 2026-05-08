@@ -137,7 +137,7 @@ export function Sidebar({ role }: SidebarProps) {
   };
 
   const SidebarContent = () => (
-    <div className="p-5 h-full flex flex-col overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
+    <div className="p-5 h-full flex flex-col overflow-hidden">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-8 px-1 flex-shrink-0">
         <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-lg shadow-indigo-600/30 flex-shrink-0">
@@ -175,8 +175,8 @@ export function Sidebar({ role }: SidebarProps) {
         </motion.div>
       )}
 
-      {/* Nav links */}
-      <div className="space-y-6 flex-1 min-h-0">
+      {/* Nav links — this is the only scrollable zone */}
+      <div className="space-y-6 flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 pr-1">
         {role === "teacher" ? (
           teacherSections.map((section, idx) => (
             <div key={idx} className="space-y-1">
