@@ -85,6 +85,7 @@ export function Sidebar({ role }: SidebarProps) {
   const studentLinks = [
     { name: "Mi Panel",      href: "/student/dashboard",   icon: LayoutDashboard },
     { name: "Mis Trabajos",  href: "/student/assignments", icon: ClipboardList },
+    { name: "Recursos",      href: "/student/resources",   icon: Library },
     { name: "Calificaciones",href: "/student/grades",      icon: BarChart3 },
     { name: "Mensajes",      href: "/student/messages",    icon: MessageSquare },
   ];
