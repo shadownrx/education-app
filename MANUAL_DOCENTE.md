@@ -5,14 +5,14 @@
 ---
 
 ## 🌟 Nuestra Visión
-En **EduFlow**, no solo construimos software; diseñamos puentes entre la pedagogía y la vanguardia tecnológica. Nuestra visión es empoderar a cada docente eliminando la carga administrativa repetitiva, permitiéndoles enfocarse en lo que realmente importa: **inspirar y guiar a sus alumnos.** 
+
+En **EduFlow**, no solo construimos software; diseñamos puentes entre la pedagogía y la vanguardia tecnológica. Nuestra visión es empoderar a cada docente eliminando la carga administrativa repetitiva, permitiéndoles enfocarse en lo que realmente importa: **inspirar y guiar a sus alumnos.**
 
 Creemos que la Inteligencia Artificial no debe reemplazar al docente, sino convertirse en su asistente más capaz, una extensión de su creatividad y conocimiento.
 
 ---
 
 ## 🎯 Objetivos de la Plataforma
-Para asegurar que EduFlow sea una herramienta transformadora, nos basamos en cuatro objetivos fundamentales:
 
 1. **Reducción de la Carga Administrativa**: Automatizar tareas como el cálculo de asistencia y la organización de calendarios, devolviendo hasta un 30% de tiempo semanal al docente.
 2. **Personalización del Aprendizaje**: Utilizar datos en tiempo real para que el docente sepa exactamente qué alumno necesita refuerzo antes de que sea tarde.
@@ -30,40 +30,93 @@ Es el corazón de tu jornada. Aquí controlas el presente de tu aula.
 - **Plan de Clases**: Tu cronograma semanal y anual con recursos adjuntos.
 - **Trabajos Prácticos**: El repositorio de tareas enviadas y por corregir.
 
-### 📊 2. Seguimiento y Análisis (Nuevo)
+### 📊 2. Seguimiento y Análisis
 Herramientas avanzadas para entender el progreso a largo plazo.
-- **Calificaciones**: Un libro de temas digital donde puedes registrar notas y ver promedios automáticos.
-- **Mensajería**: Un canal directo para anuncios a toda la clase o mensajes privados a alumnos específicos.
-- **Biblioteca**: Tu nube personal. Guarda documentos, imágenes y guías que usas frecuentemente en tus materias.
+- **Calificaciones**: Libro de calificaciones digital con promedios automáticos.
+- **Mensajería**: Canal directo para anuncios generales o mensajes privados.
+- **Biblioteca**: Tu nube personal para compartir recursos con tus alumnos.
 
 ### 🛠️ 3. Soporte y Configuración
 - **Manual de Usuario**: Acceso rápido a esta guía.
 - **Ayuda Técnica**: Enlace para reportar errores o solicitar nuevas funciones.
-- **Perfil y Ajustes**: (Icono de usuario) Personaliza tu nombre, foto y preferencias de notificaciones.
+
+---
+
+## 📚 Biblioteca de Recursos (Nuevo)
+
+La **Biblioteca** es tu espacio personal de almacenamiento en la nube. Podés subir archivos y tus alumnos los verán automáticamente en su sección "Recursos".
+
+### ¿Cómo subir un archivo?
+
+1. Ir a **Biblioteca** en el menú lateral
+2. Hacer click en **"Subir Archivo"** (botón superior derecho)
+3. En el modal:
+   - **Arrastrar** el archivo al área marcada, o hacer click para seleccionarlo
+   - Escribir un **título** descriptivo
+   - Agregar una **descripción** opcional
+4. Click en **"Publicar Recurso"**
+
+El archivo queda disponible instantáneamente para todos los alumnos de la materia.
+
+### Tipos de archivo soportados
+
+| Tipo | Extensiones | Visualización |
+|---|---|---|
+| Documentos PDF | `.pdf` | Visor nativo inline |
+| Word | `.docx`, `.doc` | Google Docs Viewer |
+| Excel | `.xlsx`, `.xls` | Google Docs Viewer |
+| Imágenes | `.jpg`, `.png`, `.gif` | Inline |
+| Texto | `.txt` | Inline |
+| Video | `.mp4` | Player inline |
+| Audio | `.mp3` | Player inline |
+
+**Límite máximo:** 20 MB por archivo.
+
+### ¿Cómo eliminan un recurso?
+Posicionarse sobre la card del archivo → hacer click en el ícono de **papelera** (aparece al pasar el cursor). El archivo se elimina del servidor automáticamente.
+
+### ¿Qué ven los alumnos?
+Los alumnos de tu materia activa ven todos los recursos publicados en su sección **"Recursos"** del menú lateral. Pueden visualizarlos sin descargarlos o descargarlos a su dispositivo.
 
 ---
 
 ## ✨ EduAI: Tu Co-Piloto Pedagógico
+
 **EduAI** no es un bot de respuestas; es un **colaborador pedagógico** basado en Llama 3.
 
 ### ¿Cómo integrarlo en tu día a día?
-- **Fase de Ideación**: ¿Te quedaste sin ideas para una clase de Geografía? Pídele a EduAI una propuesta lúdica.
-- **Fase de Estructuración**: Pídele que cree un TP completo con objetivos específicos. El sistema te propondrá el contenido, y tú, como experto, lo validarás y ajustarás.
-- **Fase de Feedback**: Si te cuesta encontrar las palabras para corregir un trabajo difícil, pídele a EduAI una estructura de devolución que sea constructiva y empática.
+- **Fase de Ideación**: ¿Te quedaste sin ideas para una clase? Pedile a EduAI una propuesta lúdica.
+- **Fase de Estructuración**: Pedile que cree un TP completo con objetivos específicos.
+- **Fase de Feedback**: Pedile una estructura de devolución constructiva para corregir trabajos.
 
 ---
 
-## 🛡️ Seguridad y Privacidad: Datos Protegidos
+## 🛡️ Seguridad y Privacidad
+
 Sabemos que la información educativa es sensible.
-- **Encriptación**: Todos los datos viajan de forma segura.
-- **Privacidad IA**: EduAI no "aprende" de tus datos personales ni de los de tus alumnos; se utiliza únicamente para procesar tus solicitudes en el momento.
+- **Encriptación**: Todos los datos viajan de forma segura (HTTPS).
+- **Almacenamiento**: Los archivos se guardan en **Vercel Blob Storage**, una infraestructura cloud de nivel enterprise.
+- **Aislamiento**: Cada materia tiene su propio espacio. Los alumnos solo ven recursos de su materia.
+- **Privacidad IA**: EduAI no "aprende" de tus datos personales ni de los de tus alumnos.
 
 ---
 
 ## ❓ Preguntas Frecuentes (FAQ)
-- **¿Puedo usar EduFlow sin internet en el aula?** Necesitas conexión para sincronizar los datos, pero una vez cargada la página, puedes pasar asistencia y los cambios se guardarán apenas recuperes la señal.
-- **¿Cómo invito a mis alumnos?** Solo dales el código de 6 letras que aparece en tu cabecera. ¡Así de fácil!
-- **¿Qué pasa si borro una materia?** Se eliminarán todos los alumnos y TPs asociados para proteger la privacidad, así que ten cuidado con esa acción.
+
+- **¿Puedo usar EduFlow sin internet en el aula?**
+  Necesitás conexión para sincronizar datos, pero una vez cargada la página podés trabajar con fluidez en redes lentas.
+
+- **¿Cómo invito a mis alumnos?**
+  Solo dales el **código de 6 letras** que aparece en la cabecera de tu panel. ¡Así de fácil!
+
+- **¿Los archivos que subo persisten después de un deploy?**
+  Sí. Los archivos se almacenan en Vercel Blob Storage (cloud), no en el servidor local, por lo que son permanentes.
+
+- **¿Hay límite de archivos que puedo subir?**
+  No hay límite en cantidad. El límite es de 5 GB de almacenamiento total en el plan gratuito de Vercel Blob.
+
+- **¿Qué pasa si borro una materia?**
+  Se eliminarán todos los alumnos y TPs asociados para proteger la privacidad. Los archivos de la Biblioteca deben eliminarse manualmente.
 
 ---
 
