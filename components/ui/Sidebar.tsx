@@ -620,6 +620,7 @@ export function TopBar({ role }: { role?: "teacher" | "student" }) {
           )}
         </div>
       </div>
+     </div>
     </header>
   );
 }
