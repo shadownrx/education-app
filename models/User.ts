@@ -6,6 +6,8 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   role: { type: String, default: "teacher" },
   isAdmin: { type: Boolean, default: false },
+  loginAttempts: { type: Number, default: 0 },
+  isLocked: { type: Boolean, default: false },
   avatar: { type: String }
 }, { timestamps: true });
 

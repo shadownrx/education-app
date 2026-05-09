@@ -5,10 +5,20 @@ import Student from "@/models/Student";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { generateToken } from "@/lib/auth";
+import { rateLimit, getIdentifier } from "@/lib/rateLimit";
 import { handleApiError, ValidationError, NotFoundError } from "@/lib/errors";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 10 attempts per minute to prevent brute forcing codes
+    const identifier = getIdentifier(request);
+    if (!rateLimit(`verify-code:${identifier}`, 10, 60 * 1000)) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again in a minute." },
+        { status: 429 }
+      );
+    }
+    
     await dbConnect();
 
     const body = await request.json();

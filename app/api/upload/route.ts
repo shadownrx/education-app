@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { verifyRequestToken } from "@/lib/auth";
+import { rateLimit, getIdentifier } from "@/lib/rateLimit";
 import { handleApiError, AuthenticationError, ValidationError } from "@/lib/errors";
 import crypto from "crypto";
 
@@ -45,6 +46,15 @@ const USE_BLOB = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: max 5 uploads per minute
+    const identifier = getIdentifier(request);
+    if (!rateLimit(`upload:${identifier}`, 5, 60 * 1000)) {
+      return NextResponse.json(
+        { error: "Too many uploads. Please wait a minute." },
+        { status: 429 }
+      );
+    }
+    
     const token = await verifyRequestToken(request);
     if (!token) throw new AuthenticationError();
 

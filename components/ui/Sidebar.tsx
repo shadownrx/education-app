@@ -47,6 +47,32 @@ export function Sidebar({ role }: SidebarProps) {
   const [adminMessage, setAdminMessage] = useState("");
   const [savingAdmin, setSavingAdmin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminTab, setAdminTab] = useState<"announcement" | "security">("announcement");
+  const [users, setUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (showAdminModal && adminTab === "security") {
+      fetch("/api/auth/admin/users")
+        .then(res => res.json())
+        .then(setUsers)
+        .catch(console.error);
+    }
+  }, [showAdminModal, adminTab]);
+
+  const handleUnlockUser = async (userId: string) => {
+    try {
+      const res = await fetch("/api/auth/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, action: "unlock" }),
+      });
+      if (res.ok) {
+        setUsers(users.map(u => u._id === userId ? { ...u, isLocked: false, loginAttempts: 0 } : u));
+      }
+    } catch (error) {
+      console.error("Error unlocking user:", error);
+    }
+  };
 
   useEffect(() => {
     if (role === "teacher") {
@@ -193,39 +219,119 @@ export function Sidebar({ role }: SidebarProps) {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-md bg-[#0f172a] border border-white/10 rounded-[32px] p-8 shadow-2xl"
+              className="relative w-full max-w-xl bg-[#0f172a] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl"
             >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
-                  <Shield className="w-6 h-6" />
+              {/* Modal Header */}
+              <div className="p-8 pb-4">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+                      <Shield className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-white">Panel de Control</h3>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Administración del Sistema</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowAdminModal(false)} className="p-2 text-slate-500 hover:text-white transition-colors">
+                    <CloseIcon className="w-6 h-6" />
+                  </button>
                 </div>
-                <div>
-                  <h3 className="text-xl font-black text-white">Panel de Control</h3>
-                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Avisos Globales</p>
+
+                {/* Tabs */}
+                <div className="flex gap-2 p-1.5 bg-slate-950/50 rounded-2xl border border-white/5 mb-6">
+                  <button 
+                    onClick={() => setAdminTab("announcement")}
+                    className={cn(
+                      "flex-1 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                      adminTab === "announcement" ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20" : "text-slate-500 hover:text-slate-300"
+                    )}
+                  >
+                    Avisos Globales
+                  </button>
+                  <button 
+                    onClick={() => setAdminTab("security")}
+                    className={cn(
+                      "flex-1 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                      adminTab === "security" ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20" : "text-slate-500 hover:text-slate-300"
+                    )}
+                  >
+                    Seguridad y Bloqueos
+                  </button>
                 </div>
               </div>
               
-              <div className="space-y-4">
-                <div>
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">Mensaje del Sistema</label>
-                  <textarea 
-                    value={adminMessage}
-                    onChange={(e) => setAdminMessage(e.target.value)}
-                    placeholder="Escribe un aviso (ej. Mantenimiento)..."
-                    className="w-full bg-slate-950 border border-white/5 rounded-2xl p-4 text-sm text-slate-300 focus:outline-none focus:border-amber-500/50 min-h-[100px] resize-none"
-                  />
-                </div>
-                
-                <div className="flex gap-3 pt-4">
-                  <button onClick={() => setShowAdminModal(false)} className="flex-1 py-4 rounded-2xl bg-white/5 text-slate-400 text-xs font-black uppercase hover:bg-white/10 transition-all">Cancelar</button>
-                  <button 
-                    onClick={handleUpdateSystemMessage}
-                    disabled={savingAdmin}
-                    className="flex-1 py-4 rounded-2xl bg-amber-500 text-black text-xs font-black uppercase hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-50"
-                  >
-                    {savingAdmin ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Publicar Aviso"}
-                  </button>
-                </div>
+              {/* Modal Content */}
+              <div className="px-8 pb-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                {adminTab === "announcement" ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">Mensaje del Sistema</label>
+                      <textarea 
+                        value={adminMessage}
+                        onChange={(e) => setAdminMessage(e.target.value)}
+                        placeholder="Escribe un aviso (ej. Mantenimiento)..."
+                        className="w-full bg-slate-950 border border-white/5 rounded-2xl p-4 text-sm text-slate-300 focus:outline-none focus:border-amber-500/50 min-h-[120px] resize-none"
+                      />
+                      <p className="text-[10px] text-slate-600 mt-2 px-1 italic text-center">Este mensaje aparecerá en la parte superior para todos los usuarios.</p>
+                    </div>
+                    
+                    <div className="flex gap-3 pt-2">
+                      <button 
+                        onClick={handleUpdateSystemMessage}
+                        disabled={savingAdmin}
+                        className="w-full py-4 rounded-2xl bg-amber-500 text-black text-xs font-black uppercase tracking-widest hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-50"
+                      >
+                        {savingAdmin ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Publicar Aviso Global"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between px-1 mb-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Usuarios Bloqueados</label>
+                      <span className="text-[9px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded-full font-black uppercase">
+                        {users.filter(u => u.isLocked).length} Cuentas
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {users.length === 0 ? (
+                        <div className="py-12 text-center bg-slate-950/30 rounded-[24px] border border-dashed border-white/5">
+                          <p className="text-xs text-slate-600 font-bold uppercase tracking-widest">No hay usuarios para mostrar</p>
+                        </div>
+                      ) : (
+                        users.map((user) => (
+                          <div 
+                            key={user._id}
+                            className={cn(
+                              "p-4 rounded-2xl border transition-all flex items-center justify-between gap-4",
+                              user.isLocked ? "bg-red-500/5 border-red-500/20" : "bg-white/2 border-white/5 opacity-60"
+                            )}
+                          >
+                            <div className="min-w-0">
+                              <p className="text-[13px] font-bold text-white truncate">{user.name}</p>
+                              <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
+                            </div>
+                            {user.isLocked ? (
+                              <button 
+                                onClick={() => handleUnlockUser(user._id)}
+                                className="px-4 py-2 rounded-xl bg-red-500 text-white text-[10px] font-black uppercase tracking-widest hover:bg-red-400 transition-all flex-shrink-0"
+                              >
+                                Desbloquear
+                              </button>
+                            ) : (
+                              <div className="flex items-center gap-2 text-emerald-500">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                <span className="text-[9px] font-black uppercase">Activo</span>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>

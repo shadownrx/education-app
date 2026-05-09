@@ -25,15 +25,43 @@ export async function POST(request: NextRequest) {
     const { email, password } = validateInput(loginSchema, body);
 
     // Find user
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password +loginAttempts +isLocked");
     if (!user) {
       throw new AuthenticationError();
+    }
+
+    // Check if account is locked
+    if (user.isLocked) {
+      return NextResponse.json(
+        { error: "Tu cuenta ha sido bloqueada por seguridad después de 5 intentos fallidos. Por favor, contacta a un administrador para desbloquearla." },
+        { status: 403 }
+      );
     }
 
     // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new AuthenticationError();
+      // Increment login attempts
+      user.loginAttempts = (user.loginAttempts || 0) + 1;
+      
+      if (user.loginAttempts >= 5) {
+        user.isLocked = true;
+        await user.save();
+        return NextResponse.json(
+          { error: "Has alcanzado el límite de intentos. Tu cuenta ha sido bloqueada. Contacta a un administrador." },
+          { status: 403 }
+        );
+      }
+      
+      await user.save();
+      throw new AuthenticationError("Email o contraseña incorrectos");
+    }
+
+    // Reset attempts on successful login
+    if (user.loginAttempts > 0 || user.isLocked) {
+      user.loginAttempts = 0;
+      user.isLocked = false;
+      await user.save();
     }
 
     // Generate JWT token
