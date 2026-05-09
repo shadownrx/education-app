@@ -46,6 +46,7 @@ export function Sidebar({ role }: SidebarProps) {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminMessage, setAdminMessage] = useState("");
   const [savingAdmin, setSavingAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (role === "teacher") {
@@ -55,6 +56,7 @@ export function Sidebar({ role }: SidebarProps) {
           if (data && data.user) {
             setUserName(data.user.name);
             setAvatarUrl(data.user.avatar || null);
+            setIsAdmin(data.user.isAdmin || false);
           }
         })
         .catch(console.error);
@@ -145,12 +147,12 @@ export function Sidebar({ role }: SidebarProps) {
         { name: "Biblioteca",     href: "/teacher/library",   icon: Library },
       ],
     },
-    {
+    ...(isAdmin ? [{
       label: "Herramientas",
       links: [
         { name: "Panel de Control", href: "#", icon: Shield, onClick: () => setShowAdminModal(true) },
       ],
-    },
+    }] : []),
   ];
 
   const studentLinks = [

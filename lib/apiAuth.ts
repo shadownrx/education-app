@@ -25,6 +25,14 @@ export async function requireAuthRole(
   return token;
 }
 
+export async function requireAdmin(request: NextRequest): Promise<TokenPayload> {
+  const token = await requireAuth(request);
+  if (!token.isAdmin) {
+    throw new AuthorizationError("Solo administradores pueden realizar esta accion");
+  }
+  return token;
+}
+
 export function toObjectId(id: string): mongoose.Types.ObjectId {
   validateInput(mongoIdSchema, id);
   return new mongoose.Types.ObjectId(id);

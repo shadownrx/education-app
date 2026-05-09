@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
         userId: token.userId,
         name: token.name,
         role: token.role,
+        isAdmin: token.isAdmin || false,
       },
     });
   } catch (error) {

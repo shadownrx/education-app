@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
       userId: user._id.toString(),
       role: user.role,
       name: user.name,
+      isAdmin: user.isAdmin || false,
     });
 
     const response = NextResponse.json(

@@ -8,6 +8,7 @@ export interface TokenPayload {
   userId: string;
   role: "teacher" | "student";
   name: string;
+  isAdmin?: boolean;
   iat?: number;
   exp?: number;
 }

@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import SystemConfig from "@/models/SystemConfig";
-import { requireAuthRole } from "@/lib/apiAuth";
+import { requireAdmin } from "@/lib/apiAuth";
 import { handleApiError } from "@/lib/errors";
 
 export async function GET() {
@@ -24,8 +24,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     await dbConnect();
-    // For now, allow teachers to update it, but we should restrict it later
-    const token = await requireAuthRole(request, "teacher");
+    // Strictly require admin for system updates
+    const token = await requireAdmin(request);
     
     const { message } = await request.json();
     
