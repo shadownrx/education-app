@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
-    const token = await requireAuthRole(request, "teacher");
+    const token = await requireAuthRole(request, "teacher", "student");
     const { prompt } = validateInput(aiPromptSchema, await request.json());
     const activeSubjectId = request.cookies.get("active_subject_id")?.value;
 
@@ -20,48 +20,52 @@ export async function POST(request: NextRequest) {
     }
 
     await dbConnect();
-    const subject = await requireTeacherSubject(token.userId, activeSubjectId);
+    const Subject = (await import("@/models/Subject")).default;
+    const subject = await Subject.findById(activeSubjectId);
+    if (!subject) throw new ValidationError("Subject not found");
 
-    const [students, lessons] = await Promise.all([
-      Student.find({ subjectId: subject._id }),
-      LessonPlan.find({ subjectId: subject._id }).sort({ week: 1 }),
-    ]);
-
-    const studentsContext = students
-      .map((student) => `- ${student.name}: ${student.status}`)
-      .join("\n");
-    const lessonsContext = lessons
-      .map((lesson) => `- Semana ${lesson.week}: ${lesson.title} (${lesson.status})`)
-      .join("\n");
-
-    const systemPrompt = `Eres un asistente inteligente integrado en la plataforma educativa "EduFlow".
-Tu objetivo es ayudar al docente con insights precisos sobre su clase.
-
-MATERIA ACTUAL: ${subject.name}
-INSTITUCION: ${subject.institution}
-
+    let contextData = "";
+    if (token.role === "teacher") {
+      await requireTeacherSubject(token.userId, activeSubjectId);
+      const [students, lessons] = await Promise.all([
+        Student.find({ subjectId: subject._id }),
+        LessonPlan.find({ subjectId: subject._id }).sort({ week: 1 }),
+      ]);
+      const studentsContext = students
+        .map((student) => `- ${student.name}: ${student.status}`)
+        .join("\n");
+      const lessonsContext = lessons
+        .map((lesson) => `- Semana ${lesson.week}: ${lesson.title} (${lesson.status})`)
+        .join("\n");
+      
+      contextData = `
 ESTADO DE LOS ESTUDIANTES:
 ${studentsContext || "No hay estudiantes registrados aun."}
 
 PLANIFICACION DE CLASES:
 ${lessonsContext || "No hay planes de clase registrados."}
+      `;
+    }
 
-INSTRUCCIONES DE FORMATO:
-1. Se especifico y utiliza los nombres de los alumnos si es relevante.
-2. Utiliza Markdown para legibilidad.
+    const systemPrompt = `Eres un asistente inteligente integrado en la plataforma educativa "EduFlow".
+Tu objetivo es ayudar al ${token.role === "teacher" ? "docente" : "alumno"} con insights precisos sobre su materia.
 
+MATERIA ACTUAL: ${subject.name}
+INSTITUCION: ${subject.institution}
+${contextData}
+
+INSTRUCCIONES PARA ${token.role === "teacher" ? "DOCENTE" : "ALUMNO"}:
+${token.role === "teacher" 
+  ? `1. Sé específico y utiliza los nombres de los alumnos si es relevante.
+2. Ayuda a planificar clases y generar trabajos prácticos.
 3. ACCIONES ESTRUCTURADAS (MUY IMPORTANTE):
-   Si sugieres crear un Trabajo Practico (TP), DEBES incluir la consigna completa en el campo "description".
-   Formato exacto al final de tu respuesta:
-   @@ACTION:{"type": "CREATE_ASSIGNMENT", "data": {"title": "Titulo corto", "deadline": "YYYY-MM-DD", "description": "CONSIGNA DETALLADA AQUI (incluye objetivos, tareas y criterios)"}}@@
-
-   Si sugieres un Plan de Clase:
-   @@ACTION:{"type": "CREATE_LESSON_PLAN", "data": {"title": "Titulo", "week": 1, "topics": ["Tema 1", "Tema 2"], "date": "YYYY-MM-DD"}}@@
-
-   Si das feedback:
-   @@ACTION:{"type": "FEEDBACK", "data": {"studentName": "Nombre", "text": "Mensaje de feedback"}}@@
-
-IMPORTANTE: El campo "description" en CREATE_ASSIGNMENT es obligatorio y debe contener el contenido pedagogico del trabajo.`;
+   @@ACTION:{"type": "CREATE_ASSIGNMENT", "data": {...}}@@
+   @@ACTION:{"type": "CREATE_LESSON_PLAN", "data": {...}}@@`
+  : `1. Actúa como un tutor pedagógico.
+2. Ayuda con dudas sobre la materia "${subject.name}".
+3. Sé motivador y claro en tus explicaciones.`
+}
+5. Utiliza Markdown para legibilidad.`;
 
     const stream = await groq.chat.completions.create({
       messages: [

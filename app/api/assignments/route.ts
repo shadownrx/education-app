@@ -7,15 +7,31 @@ import { requireAuthRole, requireTeacherSubject, toObjectId } from "@/lib/apiAut
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
-    const token = await requireAuthRole(request, "teacher");
+    const token = await requireAuthRole(request, "teacher", "student");
 
     const subjectIdStr = request.nextUrl.searchParams.get("subjectId");
     if (!subjectIdStr) throw new ValidationError("subjectId is required");
 
-    const subject = await requireTeacherSubject(token.userId, subjectIdStr);
-    const subjectId = subject._id;
-    const assignments = await Assignment.find({ subjectId }).sort({ createdAt: -1 }).lean();
+    const subjectId = toObjectId(subjectIdStr);
     
+    // Authorization check
+    const Student = (await import("@/models/Student")).default;
+    if (token.role === "teacher") {
+      await requireTeacherSubject(token.userId, subjectIdStr);
+    } else {
+      const student = await Student.findOne({ userId: toObjectId(token.userId) });
+      if (!student || student.subjectId.toString() !== subjectIdStr) {
+        throw new AuthorizationError("No tienes acceso a esta materia");
+      }
+    }
+
+    const query: any = { subjectId };
+    if (token.role === "student") {
+      const student = await Student.findOne({ userId: toObjectId(token.userId) });
+      if (student) query.student = student.name;
+    }
+
+    const assignments = await Assignment.find(query).sort({ createdAt: -1 }).lean();
     return NextResponse.json(assignments);
   } catch (error) {
     return handleApiError(error);

@@ -283,8 +283,12 @@ export default function StudentsPage() {
                           >
                             <td className="px-6 md:px-10 py-4 md:py-6">
                               <div className="flex items-center gap-3 md:gap-4">
-                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center font-black text-indigo-400 text-sm md:text-lg">
-                                  {student.name.charAt(0).toUpperCase()}
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center font-black text-indigo-400 text-sm md:text-lg overflow-hidden">
+                                  {student.avatar ? (
+                                    <img src={student.avatar} alt={student.name} className="w-full h-full object-cover" />
+                                  ) : (
+                                    student.name.charAt(0).toUpperCase()
+                                  )}
                                 </div>
                                 <span className="font-bold text-slate-100 text-sm md:text-base group-hover:text-indigo-400 transition-colors">{student.name}</span>
                               </div>
@@ -349,7 +353,13 @@ export default function StudentsPage() {
               <div className="w-full md:w-72 bg-slate-950/40 p-6 md:p-10 border-b md:border-r md:border-b-0 border-white/5 flex flex-col shrink-0">
                 <button onClick={() => setSelectedStudent(null)} className="mb-6 w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-500"><ChevronLeft /></button>
                 <div className="flex flex-col items-center text-center">
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-[32px] bg-indigo-600 flex items-center justify-center text-3xl font-black text-white mb-4">{selectedStudent.name.charAt(0).toUpperCase()}</div>
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-[32px] bg-indigo-600 flex items-center justify-center text-3xl font-black text-white mb-4 overflow-hidden shadow-xl">
+                    {selectedStudent.avatar ? (
+                      <img src={selectedStudent.avatar} alt={selectedStudent.name} className="w-full h-full object-cover" />
+                    ) : (
+                      selectedStudent.name.charAt(0).toUpperCase()
+                    )}
+                  </div>
                   <h3 className="text-xl md:text-2xl font-black text-white">{selectedStudent.name}</h3>
                 </div>
               </div>

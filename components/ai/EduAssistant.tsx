@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Send, Bot, Loader2, Maximize2, Minimize2, Trash2, Check, Clipboard, SendHorizonal, PlusCircle, ExternalLink, FileText } from "lucide-react";
+import { 
+  Sparkles, X, Send, Bot, Loader2, Maximize2, Minimize2, Trash2, Check, Clipboard, 
+  SendHorizonal, PlusCircle, ExternalLink, FileText, Mic, MicOff, RotateCcw 
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
@@ -24,6 +27,48 @@ export function EduAssistant({ variant = "floating" }: EduAssistantProps) {
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  const suggestions = [
+    { text: "📝 Planificar clase", prompt: "Ayúdame a planificar una clase sobre..." },
+    { text: "💡 Ideas para TP", prompt: "Dame ideas para un trabajo práctico de..." },
+    { text: "📊 Analizar curso", prompt: "Analiza el rendimiento general de mi curso." },
+    { text: "📨 Feedback rápido", prompt: "Genera un mensaje de feedback para un alumno que..." }
+  ];
+
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) {
+      alert("Tu navegador no soporta reconocimiento de voz.");
+      return;
+    }
+
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).speechRecognition;
+    recognitionRef.current = new SpeechRecognition();
+    recognitionRef.current.lang = 'es-AR';
+    recognitionRef.current.continuous = false;
+    recognitionRef.current.interimResults = false;
+
+    recognitionRef.current.onstart = () => setIsListening(true);
+    recognitionRef.current.onend = () => setIsListening(false);
+    recognitionRef.current.onerror = () => setIsListening(false);
+    
+    recognitionRef.current.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+    };
+
+    recognitionRef.current.start();
+  };
+
+  const clearChat = () => {
+    if (confirm("¿Quieres borrar el historial de chat?")) {
+      setMessages([
+        { role: 'assistant', content: '¡Hola de nuevo! Historial borrado. ¿En qué más puedo ayudarte?' }
+      ]);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -222,6 +267,7 @@ export function EduAssistant({ variant = "floating" }: EduAssistantProps) {
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <button onClick={clearChat} title="Borrar chat" className="p-2 hover:bg-white/10 rounded-xl transition-colors"><RotateCcw className="w-4 h-4" /></button>
           <button onClick={() => setIsExpanded(!isExpanded)} className="p-2 hover:bg-white/10 rounded-xl transition-colors"><Maximize2 className="w-4 h-4" /></button>
           <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-xl transition-colors"><X className="w-5 h-5" /></button>
         </div>
@@ -263,22 +309,47 @@ export function EduAssistant({ variant = "floating" }: EduAssistantProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 bg-slate-900 border-t border-white/10">
-        <div className="relative">
-          <textarea
-            rows={1}
-            placeholder="Pregúntale a EduAI..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-            className="w-full bg-slate-800 border border-white/10 rounded-2xl py-4 pl-4 pr-12 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all resize-none"
-          />
+      <div className="p-4 bg-slate-900 border-t border-white/10 space-y-4">
+        {messages.length < 3 && (
+          <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            {suggestions.map((s, i) => (
+              <button
+                key={i}
+                onClick={() => setInput(s.prompt)}
+                className="whitespace-nowrap px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold hover:bg-indigo-500/20 transition-all"
+              >
+                {s.text}
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="relative flex gap-2">
+          <div className="relative flex-1">
+            <textarea
+              rows={1}
+              placeholder="Pregúntale a EduAI..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+              className="w-full bg-slate-800 border border-white/10 rounded-2xl py-4 pl-4 pr-12 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all resize-none"
+            />
+            <button
+              onClick={() => handleSend()}
+              disabled={loading || !input.trim()}
+              className="absolute right-2.5 top-[10px] w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-500 transition-all disabled:opacity-50"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </div>
           <button
-            onClick={() => handleSend()}
-            disabled={loading || !input.trim()}
-            className="absolute right-2.5 top-[10px] w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-500 transition-all disabled:opacity-50"
+            onClick={startListening}
+            disabled={loading}
+            className={cn(
+              "w-12 h-12 rounded-2xl flex items-center justify-center transition-all",
+              isListening ? "bg-red-500 animate-pulse text-white" : "bg-slate-800 text-slate-400 hover:text-white border border-white/10"
+            )}
           >
-            <Send className="w-4 h-4" />
+            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           </button>
         </div>
       </div>

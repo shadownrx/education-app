@@ -53,6 +53,7 @@ export default async function middleware(request: NextRequest) {
     const payload = token ? await verifyToken(token) : null;
 
     if (!studentAccess || !activeSubjectId || !payload || payload.role !== "student") {
+      console.log("Student Access Denied:", { studentAccess, activeSubjectId, hasPayload: !!payload, role: payload?.role });
       // Redirect to home if student session is missing
       const response = NextResponse.redirect(new URL("/", request.url));
       response.cookies.delete("token");

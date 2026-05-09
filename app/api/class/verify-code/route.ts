@@ -4,6 +4,7 @@ import Subject from "@/models/Subject";
 import Student from "@/models/Student";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
+import { generateToken } from "@/lib/auth";
 import { handleApiError, ValidationError, NotFoundError } from "@/lib/errors";
 
 export async function POST(request: NextRequest) {
@@ -57,8 +58,7 @@ export async function POST(request: NextRequest) {
 
     if (!student) {
       // Generate temporary password
-      const temporaryPassword = Math.random().toString(36).substring(2, 15) + 
-                                Math.random().toString(36).substring(2, 15);
+      const temporaryPassword = Math.random().toString(36).substring(2, 15);
       const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
 
       // Create User account for student
@@ -77,38 +77,42 @@ export async function POST(request: NextRequest) {
         subjectId: subject._id,
         status: "pending",
       });
-
-      // Return temporary password for first login
-      const response = NextResponse.json(
-        {
-          message: "Access granted - First time login",
-          subjectName: subject.name,
-          subjectId: subject._id,
-          studentId: student._id,
-          studentName: student.name,
-          isNewAccount: true,
-          temporaryPassword,
-          instructions: "Use your email and temporary password to login. You can change it after first login.",
-        },
-        { status: 200 }
-      );
-      return response;
-    } else {
-      // Student exists, return login prompt
-      const response = NextResponse.json(
-        {
-          message: "Student found - Please login",
-          subjectName: subject.name,
-          subjectId: subject._id,
-          studentId: student._id,
-          studentName: student.name,
-          isNewAccount: false,
-          instructions: "Use your email and password to login.",
-        },
-        { status: 200 }
-      );
-      return response;
     }
+
+    // Generate JWT token for the student
+    const token = await generateToken({
+      userId: (student.userId || student._id).toString(),
+      role: "student",
+      name: student.name,
+    });
+
+    const response = NextResponse.json(
+      {
+        message: "Login successful",
+        subjectName: subject.name,
+        subjectId: subject._id,
+        studentId: student._id,
+        studentName: student.name,
+      },
+      { status: 200 }
+    );
+
+    // Set secure cookies (Same logic as student-login/route.ts)
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax" as const,
+      maxAge: 60 * 60 * 24, // 1 day
+      path: "/",
+    };
+
+    response.cookies.set("token", token, cookieOptions);
+    response.cookies.set("student_access", "true", cookieOptions);
+    response.cookies.set("active_subject_id", subject._id.toString(), cookieOptions);
+    response.cookies.set("student_id", student._id.toString(), cookieOptions);
+    response.cookies.set("student_name", student.name, { ...cookieOptions, httpOnly: false });
+
+    return response;
   } catch (error) {
     return handleApiError(error);
   }

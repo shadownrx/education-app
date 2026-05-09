@@ -35,15 +35,20 @@ export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [userName, setUserName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [activeSubject, setActiveSubject] = useState<any>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (role === "teacher") {
       fetch("/api/auth/me")
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data && data.user) setUserName(data.user.name);
+          if (data && data.user) {
+            setUserName(data.user.name);
+            setAvatarUrl(data.user.avatar || null);
+          }
         })
         .catch(console.error);
 
@@ -54,13 +59,47 @@ export function Sidebar({ role }: SidebarProps) {
         })
         .catch(console.error);
     } else {
+      fetch("/api/students/me")
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            setUserName(data.name);
+            setAvatarUrl(data.avatar || null);
+          }
+        });
+
       const name = document.cookie
         .split("; ")
         .find((row) => row.startsWith("student_name="))
         ?.split("=")[1];
-      setUserName(name ? decodeURIComponent(name) : "Alumno");
+      if (!userName) setUserName(name ? decodeURIComponent(name) : "Alumno");
     }
   }, [role]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/user/avatar", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setAvatarUrl(data.url);
+      }
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const teacherSections = [
     {
@@ -222,9 +261,27 @@ export function Sidebar({ role }: SidebarProps) {
       {/* User footer */}
       <div className="mt-6 pt-5 border-t border-white/5 flex-shrink-0">
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-900/60 border border-white/5 mb-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center font-black text-xs text-white flex-shrink-0 shadow-lg shadow-indigo-600/20">
-            {initials}
-          </div>
+          <label className="relative cursor-pointer group/avatar">
+            <input 
+              type="file" 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handleAvatarUpload} 
+              disabled={uploading}
+            />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center font-black text-xs text-white flex-shrink-0 shadow-lg shadow-indigo-600/20 overflow-hidden relative">
+              {uploading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                initials
+              )}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity">
+                <Zap className="w-4 h-4 text-white" />
+              </div>
+            </div>
+          </label>
           <div className="overflow-hidden flex-1 min-w-0">
             <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">
               {role === "teacher" ? "Docente" : "Alumno"}
@@ -292,25 +349,44 @@ export function Sidebar({ role }: SidebarProps) {
           </>
         )}
       </AnimatePresence>
+      <EduAssistant />
     </>
   );
 }
 
 export function TopBar({ role }: { role?: "teacher" | "student" }) {
   const [userName, setUserName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (role === "teacher") {
       fetch("/api/auth/me")
         .then((r) => (r.ok ? r.json() : null))
-        .then((d) => { if (d?.user) setUserName(d.user.name); })
+        .then((d) => { 
+          if (d?.user) {
+            setUserName(d.user.name);
+            setAvatarUrl(d.user.avatar || null);
+          }
+        })
         .catch(() => {});
-    } else if (typeof document !== "undefined") {
-      const name = document.cookie
-        .split("; ")
-        .find((r) => r.startsWith("student_name="))
-        ?.split("=")[1];
-      setUserName(name ? decodeURIComponent(name) : "Alumno");
+    } else {
+      fetch("/api/students/me")
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) {
+            setUserName(data.name);
+            // Students can also have avatars via their User record
+            // We should ideally fetch the user avatar here too
+          }
+        });
+
+      if (typeof document !== "undefined") {
+        const name = document.cookie
+          .split("; ")
+          .find((r) => r.startsWith("student_name="))
+          ?.split("=")[1];
+        if (!userName) setUserName(name ? decodeURIComponent(name) : "Alumno");
+      }
     }
   }, [role]);
 
@@ -333,7 +409,7 @@ export function TopBar({ role }: { role?: "teacher" | "student" }) {
       <div className="flex items-center gap-3 md:gap-4">
         {role === "teacher" && (
           <div className="hidden sm:block">
-            <EduAssistant variant="header" />
+            {/* AI Assistant unified in Sidebar */}
           </div>
         )}
 
@@ -346,8 +422,12 @@ export function TopBar({ role }: { role?: "teacher" | "student" }) {
         </button>
 
         {/* Avatar */}
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center font-black text-xs text-white shadow-lg shadow-indigo-600/25 cursor-pointer hover:scale-105 transition-transform select-none">
-          {initials}
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center font-black text-xs text-white shadow-lg shadow-indigo-600/25 cursor-pointer hover:scale-105 transition-transform select-none overflow-hidden">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            initials
+          )}
         </div>
       </div>
     </header>

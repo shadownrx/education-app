@@ -15,7 +15,11 @@ import {
   LayoutDashboard,
   Bot,
   Laptop,
-  AlertCircle
+  AlertCircle,
+  Tag,
+  Mail,
+  Smartphone,
+  Download
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -84,7 +88,7 @@ export default function Home() {
       });
 
       if (res.ok) {
-        router.push("/student/dashboard");
+        window.location.href = "/student/dashboard";
       } else {
         const data = await res.json();
         setError(data.error || "Error al ingresar al aula");
@@ -270,22 +274,201 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Footer */}
-      <section className="py-20 px-6 z-10 border-t border-white/5 text-center">
-        <h2 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-8">¿Listo para transformar tu aula?</h2>
-        <Link
-          href="/teacher/register"
-          className="inline-flex items-center gap-3 px-10 py-5 rounded-[24px] bg-white text-black font-black uppercase tracking-widest text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-xl shadow-white/5 active:scale-95"
-        >
-          Crear cuenta docente
-        </Link>
-        <div className="mt-20 flex flex-col items-center gap-4 opacity-50">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center"><GraduationCap className="w-3.5 h-3.5" /></div>
-            <span className="font-bold text-sm tracking-tight">EduFlow System</span>
+      {/* Quick Access Section - Restored Buttons */}
+      <section className="relative py-20 px-6 z-10 border-t border-white/5">
+        <div className="max-w-4xl mx-auto text-center">
+          <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-10">Empieza ahora mismo</h3>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/teacher/register"
+              className="w-full sm:w-auto inline-flex items-center gap-3 px-10 py-5 rounded-[24px] bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-indigo-600 hover:text-white transition-all shadow-xl shadow-white/5 active:scale-95"
+            >
+              Crear cuenta docente <ArrowRight className="w-5 h-5" />
+            </Link>
+            <button
+              onClick={() => setShowModal(true)}
+              className="w-full sm:w-auto inline-flex items-center gap-3 px-10 py-5 rounded-[24px] bg-white/5 border border-white/10 hover:bg-white/10 text-white font-black uppercase tracking-widest text-xs transition-all active:scale-95"
+            >
+              Ingresar como Alumno
+            </button>
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.5em]">Tucumán • 2026</p>
         </div>
+      </section>
+
+      {/* PWA Section */}
+      <section className="relative py-24 px-6 z-10 bg-indigo-600/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="p-12 rounded-[48px] border border-indigo-500/20 bg-slate-900/50 backdrop-blur-3xl overflow-hidden relative">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                  <Smartphone className="w-3.5 h-3.5" /> App Optimizada
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-6">
+                  Lleva tu aula en <br /> el bolsillo
+                </h2>
+                <p className="text-slate-400 text-lg font-medium mb-8 leading-relaxed">
+                  EduFlow es una **PWA (Progressive Web App)**. Puedes instalarla en tu dispositivo sin usar la App Store y acceder de forma instantánea.
+                </p>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                      <Download className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-white font-bold text-sm">Instalación Directa</p>
+                      <p className="text-slate-500 text-xs">Menú del navegador → "Instalar App"</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="aspect-square rounded-[40px] bg-gradient-to-br from-indigo-500 to-violet-700 opacity-20 blur-3xl absolute inset-0 animate-pulse" />
+                <div className="relative p-8 rounded-[40px] bg-slate-950 border border-white/10 shadow-2xl flex flex-col items-center justify-center text-center">
+                  <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center mb-6 shadow-xl shadow-indigo-600/30">
+                    <GraduationCap className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-black text-white mb-2">EduFlow PWA</h3>
+                  <p className="text-slate-500 text-sm font-medium mb-6">Disponible para iOS y Android</p>
+                  <div className="w-full h-px bg-white/5 mb-6" />
+                  <div className="flex gap-4">
+                    <div className="px-4 py-2 rounded-lg bg-white/5 text-[10px] font-black uppercase tracking-widest text-slate-400 border border-white/5">Sin Descargas</div>
+                    <div className="px-4 py-2 rounded-lg bg-white/5 text-[10px] font-black uppercase tracking-widest text-slate-400 border border-white/5">Acceso Offline</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+          </div>
+        </div>
+      </section>
+
+      {/* CTA + Footer */}
+      <section className="relative z-10 border-t border-white/5">
+
+
+        {/* Full Footer */}
+        <footer className="border-t border-white/5 bg-slate-950/80 backdrop-blur-xl">
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+
+              {/* Brand */}
+              <div className="md:col-span-1 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-lg shadow-indigo-600/20">
+                    <GraduationCap className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="font-black text-xl tracking-tighter text-white">EduFlow</span>
+                </div>
+                <p className="text-slate-500 text-sm font-medium leading-relaxed max-w-xs">
+                  La plataforma educativa del futuro. Conecta docentes y alumnos con herramientas de IA.
+                </p>
+                <div className="flex flex-col gap-3 mt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                      <Tag className="w-3 h-3" /> v1.0.0
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest">Online</span>
+                    </div>
+                  </div>
+                  <a
+                    href="mailto:salvadorjuars4@gmail.com?subject=Donación EduFlow"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500/20 transition-all w-fit group"
+                  >
+                    <Mail className="w-3.5 h-3.5 shrink-0" />
+                    ¿Deseas donar? Contactame
+                  </a>
+                </div>
+              </div>
+
+              {/* Plataforma */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Plataforma</h4>
+                <nav className="flex flex-col gap-3">
+                  <a href="#features" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-indigo-400 transition-all duration-300" />
+                    Funciones
+                  </a>
+                  <a href="#roles" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-indigo-400 transition-all duration-300" />
+                    Accesos
+                  </a>
+                  <Link href="/teacher/register" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-indigo-400 transition-all duration-300" />
+                    Registro Docente
+                  </Link>
+                  <Link href="/teacher/login" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-indigo-400 transition-all duration-300" />
+                    Login Docente
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Alumnos */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Alumnos</h4>
+                <nav className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="text-left text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-0 group-hover:w-3 h-px bg-violet-400 transition-all duration-300" />
+                    Ingresar al Aula
+                  </button>
+                  <Link href="/student/dashboard" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-violet-400 transition-all duration-300" />
+                    Mi Dashboard
+                  </Link>
+                  <Link href="/support" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-violet-400 transition-all duration-300" />
+                    Ayuda y Soporte
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Legal & Soporte */}
+              <div className="flex flex-col gap-4">
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Información</h4>
+                <nav className="flex flex-col gap-3">
+                  <Link href="/support" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-blue-400 transition-all duration-300" />
+                    Soporte Técnico
+                  </Link>
+                  <Link href="/support#faq" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-blue-400 transition-all duration-300" />
+                    Preguntas Frecuentes
+                  </Link>
+                  <a href="mailto:salvadorjuars4@gmail.com" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                    <span className="w-0 group-hover:w-3 h-px bg-blue-400 transition-all duration-300" />
+                    salvadorjuars4@gmail.com
+                  </a>
+                </nav>
+              </div>
+            </div>
+
+            {/* Bottom bar */}
+            <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-6">
+                <p className="text-slate-600 text-[11px] font-bold uppercase tracking-[0.3em]">
+                  © 2026 EduFlow System — Tucumán, Argentina
+                </p>
+              </div>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest">Datos seguros</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-600">
+                  <Zap className="w-3.5 h-3.5" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest">IA potenciada</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </section>
 
       {/* Student Code Modal */}

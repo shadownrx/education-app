@@ -12,9 +12,22 @@ const outfit = Outfit({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  themeColor: "#4f46e5",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "EduFlow | Gestion Educativa Inteligente",
-  description: "La plataforma integral para profesores y alumnos. Planifica clases, controla la asistencia y gestiona entregas.",
+  title: "EduFlow | Gestión Educativa Inteligente",
+  description: "La plataforma integral para profesores y alumnos potenciada por IA. Planifica clases, controla la asistencia y gestiona entregas.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "EduFlow",
+  },
 };
 
 import { ToastProvider } from "@/components/ui/Toast";

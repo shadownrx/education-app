@@ -21,12 +21,16 @@ export async function GET(request: NextRequest) {
       ? currentStudent.attendanceHistory.filter((h: AttendanceEntry) => h.status === "absent").length
       : 0;
 
+    const User = (await import("@/models/User")).default;
+    const user = await User.findById(token.userId);
+
     return NextResponse.json({
       id: currentStudent._id,
       name: currentStudent.name,
       email: currentStudent.email,
       status: currentStudent.status,
       subjectId: currentStudent.subjectId,
+      avatar: user?.avatar || null,
       absences,
     });
   } catch (error) {

@@ -24,8 +24,18 @@ export async function GET(request: NextRequest) {
 
     const subject = await requireTeacherSubject(token.userId, subjectId);
 
-    const students = await Student.find({ subjectId: subject._id }).sort({ name: 1 });
-    return NextResponse.json(students);
+    const students = await Student.find({ subjectId: subject._id })
+      .populate("userId", "avatar")
+      .sort({ name: 1 })
+      .lean();
+
+    // Flatten avatar for easier frontend use
+    const enrichedStudents = students.map((s: any) => ({
+      ...s,
+      avatar: s.userId?.avatar || null
+    }));
+
+    return NextResponse.json(enrichedStudents);
   } catch (error) {
     return handleApiError(error);
   }
