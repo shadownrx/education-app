@@ -20,6 +20,10 @@ import {
   Library,
   HelpCircle,
   Zap,
+  Loader2,
+  AlertCircle,
+  Shield,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -39,6 +43,9 @@ export function Sidebar({ role }: SidebarProps) {
   const [activeSubject, setActiveSubject] = useState<any>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [adminMessage, setAdminMessage] = useState("");
+  const [savingAdmin, setSavingAdmin] = useState(false);
 
   useEffect(() => {
     if (role === "teacher") {
@@ -75,6 +82,25 @@ export function Sidebar({ role }: SidebarProps) {
       if (!userName) setUserName(name ? decodeURIComponent(name) : "Alumno");
     }
   }, [role]);
+
+  const handleUpdateSystemMessage = async () => {
+    setSavingAdmin(true);
+    try {
+      const res = await fetch("/api/app-version", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: adminMessage || null }),
+      });
+      if (res.ok) {
+        setShowAdminModal(false);
+        window.location.reload(); // Refresh to see changes
+      }
+    } catch (error) {
+      console.error("Error updating system message:", error);
+    } finally {
+      setSavingAdmin(false);
+    }
+  };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -119,6 +145,12 @@ export function Sidebar({ role }: SidebarProps) {
         { name: "Biblioteca",     href: "/teacher/library",   icon: Library },
       ],
     },
+    {
+      label: "Herramientas",
+      links: [
+        { name: "Panel de Control", href: "#", icon: Shield, onClick: () => setShowAdminModal(true) },
+      ],
+    },
   ];
 
   const studentLinks = [
@@ -142,8 +174,21 @@ export function Sidebar({ role }: SidebarProps) {
     ? userName.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()
     : "??";
 
-  const NavLink = ({ href, icon: Icon, name }: { href: string; icon: any; name: string }) => {
+  const NavLink = ({ href, icon: Icon, name, onClick }: { href: string; icon: any; name: string; onClick?: () => void }) => {
     const isActive = pathname === href;
+    
+    if (onClick) {
+      return (
+        <button
+          onClick={onClick}
+          className="w-full relative flex items-center gap-3 px-4 py-3 rounded-2xl text-[13px] font-bold text-slate-500 hover:text-slate-200 hover:bg-white/5 transition-all duration-200 group overflow-hidden"
+        >
+          <Icon className="w-4 h-4 flex-shrink-0 transition-colors text-slate-600 group-hover:text-slate-400" />
+          <span className="truncate">{name}</span>
+        </button>
+      );
+    }
+
     return (
       <Link
         href={href}
@@ -177,6 +222,65 @@ export function Sidebar({ role }: SidebarProps) {
 
   const SidebarContent = () => (
     <div className="p-5 h-full flex flex-col overflow-hidden">
+      {/* Admin Modal */}
+      <AnimatePresence>
+        {showAdminModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowAdminModal(false)}
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-[#0f172a] border border-white/10 rounded-[32px] p-8 shadow-2xl"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+                  <Shield className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-white">Panel de Control</h3>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Avisos Globales</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2 px-1">Mensaje del Sistema</label>
+                  <textarea 
+                    value={adminMessage}
+                    onChange={(e) => setAdminMessage(e.target.value)}
+                    placeholder="Escribe un aviso (ej. Mantenimiento)..."
+                    className="w-full bg-slate-950 border border-white/5 rounded-2xl p-4 text-sm text-slate-300 focus:outline-none focus:border-amber-500/50 min-h-[100px] resize-none"
+                  />
+                  <p className="text-[10px] text-slate-600 mt-2 px-1 italic">Deja vacío para eliminar el aviso actual.</p>
+                </div>
+                
+                <div className="flex gap-3 pt-4">
+                  <button 
+                    onClick={() => setShowAdminModal(false)}
+                    className="flex-1 py-4 rounded-2xl bg-white/5 text-slate-400 text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={handleUpdateSystemMessage}
+                    disabled={savingAdmin}
+                    className="flex-1 py-4 rounded-2xl bg-amber-500 text-black text-xs font-black uppercase tracking-widest hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 disabled:opacity-50"
+                  >
+                    {savingAdmin ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Publicar Aviso"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
       {/* Logo */}
       <div className="flex items-center gap-3 mb-8 px-1 flex-shrink-0">
         <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center shadow-lg shadow-indigo-600/30 flex-shrink-0">
@@ -390,14 +494,65 @@ export function TopBar({ role }: { role?: "teacher" | "student" }) {
     }
   }, [role]);
 
+  const [hasUpdate, setHasUpdate] = useState(false);
+  const [systemMessage, setSystemMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkVersion = async () => {
+      try {
+        const res = await fetch("/api/app-version");
+        if (res.ok) {
+          const { version, message } = await res.json();
+          setSystemMessage(message);
+          
+          const storedVersion = localStorage.getItem("app_version");
+          
+          if (!storedVersion) {
+            localStorage.setItem("app_version", version);
+          } else if (storedVersion !== version) {
+            setHasUpdate(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking app version:", error);
+      }
+    };
+
+    checkVersion();
+    const interval = setInterval(checkVersion, 1000 * 60 * 5); // Check every 5 mins
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleReload = () => {
+    localStorage.removeItem("app_version");
+    window.location.reload();
+  };
+
   const initials = userName
     ? userName.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase()
     : "??";
 
   return (
-    <header className="min-h-[72px] bg-[#020617] border-b border-white/5 sticky top-0 z-30 flex items-center justify-between px-6 md:px-10 py-4">
-      {/* Search */}
-      <div className="relative max-w-sm w-full ml-14 lg:ml-0">
+    <header className="flex flex-col sticky top-0 z-30 bg-[#020617]">
+      <AnimatePresence>
+        {systemMessage && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-amber-400 text-black px-6 py-2 flex items-center justify-center gap-3 overflow-hidden shadow-[0_0_20px_rgba(251,191,36,0.3)]"
+          >
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <p className="text-xs font-black uppercase tracking-widest text-center leading-tight">
+              Aviso del Sistema: {systemMessage}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="min-h-[72px] border-b border-white/5 flex items-center justify-between px-6 md:px-10 py-4">
+        {/* Search */}
+        <div className="relative max-w-sm w-full ml-14 lg:ml-0">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
         <input
           type="text"
@@ -416,10 +571,45 @@ export function TopBar({ role }: { role?: "teacher" | "student" }) {
         <div className="h-6 w-px bg-white/8 mx-1" />
 
         {/* Notifications */}
-        <button className="w-10 h-10 rounded-2xl bg-slate-900/80 border border-white/5 flex items-center justify-center hover:bg-slate-800 hover:border-white/10 transition-all relative group">
-          <Bell className="w-4 h-4 text-slate-500 group-hover:text-slate-300 transition-colors" />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-indigo-500 rounded-full ring-2 ring-[#020617] animate-pulse" />
-        </button>
+        <div className="relative">
+          <button 
+            onClick={hasUpdate ? handleReload : undefined}
+            className={cn(
+              "w-10 h-10 rounded-2xl border flex items-center justify-center transition-all relative group",
+              hasUpdate 
+                ? "bg-red-500/10 border-red-500/50 hover:bg-red-500/20" 
+                : "bg-slate-900/80 border-white/5 hover:bg-slate-800 hover:border-white/10"
+            )}
+          >
+            <Bell className={cn(
+              "w-4 h-4 transition-colors",
+              hasUpdate ? "text-red-400" : "text-slate-500 group-hover:text-slate-300"
+            )} />
+            {hasUpdate && (
+              <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-[#020617] animate-ping" />
+            )}
+          </button>
+          
+          <AnimatePresence>
+            {hasUpdate && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="absolute right-0 mt-3 w-64 p-4 rounded-3xl bg-[#0f172a] border border-red-500/30 shadow-2xl z-50 pointer-events-none"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 rounded-xl bg-red-500/20 text-red-400">
+                    <Zap className="w-4 h-4" />
+                  </div>
+                  <p className="text-xs font-black text-white uppercase tracking-widest">Actualización</p>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                  Hay nuevas mejoras disponibles en EduFlow. <span className="text-red-400 font-bold">Haz clic en la campana</span> para recargar y aplicar los cambios.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Avatar */}
         <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 flex items-center justify-center font-black text-xs text-white shadow-lg shadow-indigo-600/25 cursor-pointer hover:scale-105 transition-transform select-none overflow-hidden">

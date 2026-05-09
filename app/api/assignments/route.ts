@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Assignment from "@/models/Assignment";
-import { handleApiError, ValidationError, NotFoundError } from "@/lib/errors";
+import { handleApiError, ValidationError, NotFoundError, AuthorizationError } from "@/lib/errors";
 import { requireAuthRole, requireTeacherSubject, toObjectId } from "@/lib/apiAuth";
 
 export async function GET(request: NextRequest) {
