@@ -7,6 +7,7 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   // Allow Vercel Blob images
   images: {
     remotePatterns: [
