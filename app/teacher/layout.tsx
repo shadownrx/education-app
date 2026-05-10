@@ -1,20 +1,23 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyToken } from "@/lib/auth";
-import StudentDashboardClient from "./StudentDashboardClient";
 
-export default async function StudentDashboard() {
+export default async function TeacherLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
   if (!token) {
-    redirect("/");
+    redirect("/teacher/login");
   }
 
   const payload = await verifyToken(token);
-  if (!payload || payload.role !== "student") {
-    redirect("/");
+  if (!payload || payload.role !== "teacher") {
+    redirect("/teacher/login");
   }
 
-  return <StudentDashboardClient />;
+  return <>{children}</>;
 }

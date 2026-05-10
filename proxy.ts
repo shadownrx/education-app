@@ -22,11 +22,13 @@ export default async function middleware(request: NextRequest) {
 
     // Require valid token for other teacher routes
     if (!token) {
+      console.log(`[AUTH] No token found for ${pathname}. Redirecting to login.`);
       return NextResponse.redirect(new URL("/teacher/login", request.url));
     }
 
     const payload = await verifyToken(token);
     if (!payload || payload.role !== "teacher") {
+      console.log(`[AUTH] Invalid token or wrong role for ${pathname}. Role: ${payload?.role}`);
       // Clear invalid token
       const response = NextResponse.redirect(new URL("/teacher/login", request.url));
       response.cookies.delete("token");
@@ -34,12 +36,11 @@ export default async function middleware(request: NextRequest) {
       return response;
     }
 
+    console.log(`[AUTH] Teacher access granted for ${pathname}`);
+    
     // If logged in but no subject selected, redirect to subjects selection (except on subjects page itself)
     const activeSubject = request.cookies.get("active_subject_id")?.value;
     if (!activeSubject && pathname !== "/teacher/subjects" && pathname !== "/teacher/dashboard") {
-       // Allow dashboard even without subject for first-time onboarding if needed, 
-       // but typically we want them to pick a subject.
-       // Let's keep it strict.
        return NextResponse.redirect(new URL("/teacher/subjects", request.url));
     }
 
@@ -53,7 +54,12 @@ export default async function middleware(request: NextRequest) {
     const payload = token ? await verifyToken(token) : null;
 
     if (!studentAccess || !activeSubjectId || !payload || payload.role !== "student") {
-      console.log("Student Access Denied:", { studentAccess, activeSubjectId, hasPayload: !!payload, role: payload?.role });
+      console.log(`[AUTH] Student access denied for ${pathname}:`, { 
+        hasAccessCookie: !!studentAccess, 
+        hasSubjectId: !!activeSubjectId, 
+        hasToken: !!payload, 
+        role: payload?.role 
+      });
       // Redirect to home if student session is missing
       const response = NextResponse.redirect(new URL("/", request.url));
       response.cookies.delete("token");
@@ -64,6 +70,7 @@ export default async function middleware(request: NextRequest) {
       return response;
     }
     
+    console.log(`[AUTH] Student access granted for ${pathname}`);
     return NextResponse.next();
   }
 
@@ -76,5 +83,14 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/teacher/:path*", "/student/:path*"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };
