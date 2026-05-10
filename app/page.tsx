@@ -19,7 +19,8 @@ import {
   Tag,
   Mail,
   Smartphone,
-  Download
+  Download,
+  Heart
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -236,42 +237,57 @@ export default function Home() {
 
       {/* Roles Section */}
       <section id="roles" className="relative py-32 px-6 z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
               whileHover={{ y: -10 }}
-              className="p-12 rounded-[48px] bg-gradient-to-br from-indigo-600 to-indigo-800 border border-white/10 shadow-2xl relative overflow-hidden group"
+              className="p-10 rounded-[48px] bg-gradient-to-br from-indigo-600 to-indigo-800 border border-white/10 shadow-2xl relative overflow-hidden group"
             >
               <div className="relative z-10">
                 <Users className="w-12 h-12 text-white mb-8" />
-                <h3 className="text-4xl font-black text-white mb-4">Soy Docente</h3>
-                <p className="text-indigo-100 text-lg font-medium mb-10 max-w-md">Lidera tu aula con herramientas avanzadas de gestión y automatización.</p>
-                <Link href="/teacher/login" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-black uppercase tracking-widest text-xs hover:scale-105 transition-transform">
+                <h3 className="text-3xl font-black text-white mb-4">Soy Docente</h3>
+                <p className="text-indigo-100 text-sm font-medium mb-10">Lidera tu aula con herramientas avanzadas de gestión y automatización.</p>
+                <Link href="/teacher/login" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-transform">
                   Entrar al Panel <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             </motion.div>
 
             <motion.div
               whileHover={{ y: -10 }}
-              className="p-12 rounded-[48px] bg-[#0f172a] border border-white/5 shadow-2xl relative overflow-hidden group"
+              className="p-10 rounded-[48px] bg-[#0f172a] border border-white/5 shadow-2xl relative overflow-hidden group"
             >
               <div className="relative z-10">
                 <BookOpen className="w-12 h-12 text-indigo-400 mb-8" />
-                <h3 className="text-4xl font-black text-white mb-4">Soy Alumno</h3>
-                <p className="text-slate-400 text-lg font-medium mb-10 max-w-md">Accede a tus clases, entrega tareas y visualiza tu progreso académico.</p>
+                <h3 className="text-3xl font-black text-white mb-4">Soy Alumno</h3>
+                <p className="text-slate-400 text-sm font-medium mb-10">Accede a tus clases, entrega tareas y visualiza tu progreso académico.</p>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-xs hover:scale-105 transition-transform"
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-transform"
                 >
                   Ingresar Código <MousePointer2 className="w-4 h-4" />
                 </button>
               </div>
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            </motion.div>
+
+            <motion.div
+              whileHover={{ y: -10 }}
+              className="p-10 rounded-[48px] bg-[#0f172a] border border-white/5 shadow-2xl relative overflow-hidden group"
+            >
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-8">
+                  <Heart className="w-8 h-8 text-pink-500" />
+                </div>
+                <h3 className="text-3xl font-black text-white mb-4">Soy Padre</h3>
+                <p className="text-slate-400 text-sm font-medium mb-10">Consulta el desempeño y asistencia de tu hijo de forma rápida.</p>
+                <Link href="/parent" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all active:scale-95">
+                  Consultar Progreso <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="absolute top-0 right-0 w-48 h-48 bg-pink-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             </motion.div>
           </div>
-        </div>
       </section>
 
       {/* Quick Access Section - Restored Buttons */}

@@ -26,19 +26,51 @@ Creemos que la Inteligencia Artificial no debe reemplazar al docente, sino conve
 ### 📂 1. Gestión Diaria
 Es el corazón de tu jornada. Aquí controlas el presente de tu aula.
 - **Panel Principal**: Tu resumen ejecutivo con métricas de asistencia y tareas.
-- **Mis Alumnos**: Donde realizas el pase de lista y ves las fichas individuales.
+- **Mis Alumnos**: Vista detallada de tus estudiantes.
+- **Asistencia (Nuevo)**: Módulo de pase de lista masivo y estadísticas diarias.
 - **Plan de Clases**: Tu cronograma semanal y anual con recursos adjuntos.
 - **Trabajos Prácticos**: El repositorio de tareas enviadas y por corregir.
 
 ### 📊 2. Seguimiento y Análisis
 Herramientas avanzadas para entender el progreso a largo plazo.
 - **Calificaciones**: Libro de calificaciones digital con promedios automáticos.
+- **Gamificación (Nuevo)**: Sistema de XP e insignias que motiva a los alumnos automáticamente.
 - **Mensajería**: Canal directo para anuncios generales o mensajes privados.
 - **Biblioteca**: Tu nube personal para compartir recursos con tus alumnos.
 
-### 🛠️ 3. Soporte y Configuración
-- **Manual de Usuario**: Acceso rápido a esta guía.
-- **Ayuda Técnica**: Enlace para reportar errores o solicitar nuevas funciones.
+### 🛠️ 3. Herramientas de IA
+- **Generador de Quizzes (Nuevo)**: Crea exámenes de opción múltiple en segundos.
+- **EduAI**: Asistente pedagógico para planificación y feedback.
+
+---
+
+## 📅 Control de Asistencia (Nuevo)
+
+Hemos simplificado el pase de lista. Ahora podés marcar a toda la clase en una sola pantalla.
+1. Seleccioná **Asistencia** en el menú.
+2. Marcá **Presente**, **Ausente** o **Tarde** para cada alumno.
+3. Click en **"Guardar Asistencia"**.
+*Los datos alimentan automáticamente los gráficos del panel principal y el historial del alumno.*
+
+---
+
+## 🎮 Sistema de Gamificación (Nuevo)
+
+EduFlow convierte el esfuerzo en progreso.
+- **XP (Experiencia)**: Cuando calificás un trabajo, el alumno gana puntos (`Nota * 10`).
+- **Niveles**: Al acumular XP, el alumno sube de nivel automáticamente.
+- **Insignias**: Los alumnos desbloquean medallas digitales (como "Nivel 2 🚀") que aparecen en su dashboard.
+*Esto fomenta la entrega a tiempo y la mejora de notas.*
+
+---
+
+## 🤖 Generador de Quizzes IA (Nuevo)
+
+Ahorrá horas de trabajo creando exámenes.
+1. Ingresá a **Generador de Quizzes**.
+2. Escribí el **tema** y seleccioná el **nivel** de dificultad.
+3. La IA generará preguntas con opciones múltiples.
+4. Click en **"Convertir en Tarea"** para enviarlo instantáneamente a todos tus alumnos como un Trabajo Práctico.
 
 ---
 
