@@ -24,6 +24,8 @@ import {
   AlertCircle,
   Shield,
   Settings,
+  CheckCircle2,
+  Bot,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -165,6 +167,7 @@ export function Sidebar({ role }: SidebarProps) {
       links: [
         { name: "Panel Principal",    href: "/teacher/dashboard",   icon: LayoutDashboard },
         { name: "Mis Alumnos",        href: "/teacher/students",    icon: Users },
+        { name: "Asistencia",         href: activeSubject ? `/teacher/attendance?subjectId=${activeSubject._id}` : "/teacher/attendance", icon: CheckCircle2 },
         { name: "Plan de Clases",     href: "/teacher/lesson-plan", icon: Calendar },
         { name: "Trabajos Prácticos", href: "/teacher/assignments", icon: ClipboardList },
       ],
@@ -177,12 +180,13 @@ export function Sidebar({ role }: SidebarProps) {
         { name: "Biblioteca",     href: "/teacher/library",   icon: Library },
       ],
     },
-    ...(isAdmin ? [{
+    {
       label: "Herramientas",
       links: [
-        { name: "Panel de Control", href: "#", icon: Shield, onClick: () => setShowAdminModal(true) },
+        { name: "Generador de Quizzes", href: activeSubject ? `/teacher/quiz-generator?subjectId=${activeSubject._id}` : "/teacher/quiz-generator", icon: Bot },
+        ...(isAdmin ? [{ name: "Panel de Control", href: "#", icon: Shield, onClick: () => setShowAdminModal(true) }] : []),
       ],
-    }] : []),
+    },
   ];
 
   const studentLinks = [

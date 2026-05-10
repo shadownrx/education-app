@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "EduFlow",
   },
+  icons: {
+    apple: "/icons/icon.svg",
+  },
 };
 
 import { ToastProvider } from "@/components/ui/Toast";

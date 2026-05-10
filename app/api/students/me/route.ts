@@ -32,6 +32,9 @@ export async function GET(request: NextRequest) {
       subjectId: currentStudent.subjectId,
       avatar: user?.avatar || null,
       absences,
+      xp: currentStudent.xp || 0,
+      level: currentStudent.level || 1,
+      badges: currentStudent.badges || [],
     });
   } catch (error) {
     return handleApiError(error);

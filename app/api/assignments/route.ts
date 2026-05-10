@@ -60,6 +60,35 @@ export async function POST(request: NextRequest) {
         { grade, status, submittedAt: body.submittedAt || new Date() },
         { new: true }
       );
+
+      // Award XP if graded
+      if (status === "graded" && grade) {
+        const Student = (await import("@/models/Student")).default;
+        const student = await Student.findOne({ 
+          name: assignment.student, 
+          subjectId: assignment.subjectId 
+        });
+
+        if (student) {
+          const xpGained = Math.round(grade * 10);
+          student.xp = (student.xp || 0) + xpGained;
+          
+          // Basic level up logic: level * 100 xp needed for next level
+          const xpNeeded = student.level * 100;
+          if (student.xp >= xpNeeded) {
+            student.level += 1;
+            // Add a badge for leveling up if you want
+            if (!student.badges) student.badges = [];
+            student.badges.push({
+              name: `Nivel ${student.level}`,
+              icon: "🚀",
+              awardedAt: new Date()
+            });
+          }
+          await student.save();
+        }
+      }
+
       return NextResponse.json(assignment);
     } 
     

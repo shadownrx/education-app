@@ -15,6 +15,13 @@ const StudentSchema = new Schema({
     date: { type: Date, default: Date.now },
     status: String
   }],
+  xp: { type: Number, default: 0 },
+  level: { type: Number, default: 1 },
+  badges: [{
+    name: { type: String },
+    icon: { type: String },
+    awardedAt: { type: Date, default: Date.now }
+  }],
   passwordChangedAt: { type: Date, default: null },
   lastLogin: { type: Date, default: null }
 }, { timestamps: true });

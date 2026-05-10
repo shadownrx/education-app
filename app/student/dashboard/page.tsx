@@ -21,7 +21,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-interface StudentInfo { name: string; subjectCount: number; absences: number; }
+interface StudentInfo { 
+  name: string; 
+  subjectCount: number; 
+  absences: number; 
+  xp: number; 
+  level: number; 
+  badges: any[]; 
+}
 interface AssignmentStat { submitted: number; total: number; avg: string; pending: any[]; graded: any[]; }
 
 const Skeleton = ({ className }: { className?: string }) => (
@@ -53,7 +60,14 @@ export default function StudentDashboard() {
 
       if (meRes.ok) {
         const me = await meRes.json();
-        setStudentInfo({ name: me.name, subjectCount: 1, absences: me.absences });
+        setStudentInfo({ 
+          name: me.name, 
+          subjectCount: 1, 
+          absences: me.absences,
+          xp: me.xp,
+          level: me.level,
+          badges: me.badges
+        });
         subjectId = me.subjectId;
       }
 
@@ -97,6 +111,9 @@ export default function StudentDashboard() {
   const avgNum = parseFloat(assignmentStat?.avg ?? "0");
   const avgColor = avgNum >= 7 ? "text-emerald-400" : avgNum >= 4 ? "text-amber-400" : "text-red-400";
 
+  const xpNeeded = (studentInfo?.level || 1) * 100;
+  const xpProgress = ((studentInfo?.xp || 0) % xpNeeded) / xpNeeded * 100;
+
   return (
     <div className="flex min-h-screen bg-[#020617] text-slate-200 overflow-x-hidden">
       <Sidebar role="student" />
@@ -108,8 +125,8 @@ export default function StudentDashboard() {
 
           {/* ── Welcome Header ── */}
           <header className="mb-8 md:mb-12 p-7 md:p-10 rounded-[32px] md:rounded-[40px] bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 border border-white/10 shadow-2xl shadow-indigo-900/40 relative overflow-hidden">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div>
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+              <div className="max-w-xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] font-black uppercase tracking-widest text-white mb-5">
                   <Sparkles className="w-3 h-3" /> Panel del Estudiante
                 </div>
@@ -118,17 +135,61 @@ export default function StudentDashboard() {
                     <>¡Hola, <span className="text-indigo-200">{studentInfo.name.split(" ")[0]}</span>! 👋</>
                   ) : "¡Bienvenido!"}
                 </h1>
-                <p className="text-indigo-100/70 text-sm font-medium">
+                <p className="text-indigo-100/70 text-sm font-medium mb-6">
                   Revisá tus tareas y mantente al día con tus calificaciones.
                 </p>
+
+                {/* Level Progress */}
+                {!loading && studentInfo && (
+                  <div className="bg-black/20 backdrop-blur-sm border border-white/5 p-4 rounded-2xl">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="px-2 py-1 bg-amber-500 text-black text-[10px] font-black rounded-lg">
+                          NIVEL {studentInfo.level}
+                        </div>
+                        <span className="text-[11px] font-bold text-white/80">
+                          {studentInfo.xp} / {xpNeeded} XP
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">
+                        Siguiente nivel en {xpNeeded - studentInfo.xp} XP
+                      </span>
+                    </div>
+                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${xpProgress}%` }}
+                        className="h-full bg-gradient-to-r from-amber-400 to-yellow-600 shadow-[0_0_12px_rgba(251,191,36,0.4)]"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <button
-                onClick={handleLogout}
-                className="w-fit flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 border border-white/10 text-xs font-black uppercase tracking-widest text-white hover:bg-white hover:text-indigo-600 transition-all active:scale-95 flex-shrink-0"
-              >
-                <LogOut className="w-4 h-4" /> Salir
-              </button>
+              <div className="flex flex-col gap-4">
+                {/* Badges Preview */}
+                {!loading && studentInfo && studentInfo.badges.length > 0 && (
+                  <div className="flex -space-x-2">
+                    {studentInfo.badges.slice(0, 3).map((badge, i) => (
+                      <div key={i} className="w-10 h-10 rounded-full bg-[#1e293b] border-2 border-indigo-600 flex items-center justify-center text-lg shadow-xl" title={badge.name}>
+                        {badge.icon || "🏆"}
+                      </div>
+                    ))}
+                    {studentInfo.badges.length > 3 && (
+                      <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-[10px] font-bold text-white">
+                        +{studentInfo.badges.length - 3}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleLogout}
+                  className="w-fit flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 border border-white/10 text-xs font-black uppercase tracking-widest text-white hover:bg-white hover:text-indigo-600 transition-all active:scale-95 flex-shrink-0"
+                >
+                  <LogOut className="w-4 h-4" /> Salir
+                </button>
+              </div>
             </div>
             <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none" />
           </header>
