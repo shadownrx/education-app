@@ -25,7 +25,6 @@ import {
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -36,7 +35,6 @@ export default function Home() {
   const [subjectName, setSubjectName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -127,7 +125,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/teacher/login" className="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors px-4 py-2">
+            <Link href="/teacher/login" prefetch={false} className="text-sm font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors px-4 py-2">
               Login
             </Link>
             <button
@@ -246,7 +244,7 @@ export default function Home() {
                 <Users className="w-12 h-12 text-white mb-8" />
                 <h3 className="text-3xl font-black text-white mb-4">Soy Docente</h3>
                 <p className="text-indigo-100 text-sm font-medium mb-10">Lidera tu aula con herramientas avanzadas de gestión y automatización.</p>
-                <Link href="/teacher/login" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-transform">
+                <Link href="/teacher/login" prefetch={false} className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-transform">
                   Entrar al Panel <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -333,7 +331,7 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Instalación Directa</p>
-                      <p className="text-slate-500 text-xs">Menú del navegador → "Instalar App"</p>
+                      <p className="text-slate-500 text-xs">Menú del navegador → &quot;Instalar App&quot;</p>
                     </div>
                   </div>
                 </div>
@@ -416,7 +414,7 @@ export default function Home() {
                     <span className="w-0 group-hover:w-3 h-px bg-indigo-400 transition-all duration-300" />
                     Registro Docente
                   </Link>
-                  <Link href="/teacher/login" className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
+                  <Link href="/teacher/login" prefetch={false} className="text-slate-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2 group">
                     <span className="w-0 group-hover:w-3 h-px bg-indigo-400 transition-all duration-300" />
                     Login Docente
                   </Link>
